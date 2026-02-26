@@ -602,21 +602,143 @@
   }
 
   /* ===================================
-     LOADER
+     PAGE LOADER — CINEMATIC CAROUSEL
      =================================== */
-  .loader-overlay {
-      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-      z-index: calc(var(--z-overlay) + 10); pointer-events: none;
-      opacity: 0; transition: opacity 0.3s ease;
+  #page-loader {
+      position: fixed; inset: 0;
+      z-index: calc(var(--z-overlay) + 100);
+      background: #000;
+      pointer-events: auto;
+      opacity: 1;
+      transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
   }
-  .loader-overlay.active { opacity: 1; pointer-events: auto; }
-  .loader-spinner {
-      width: 40px; height: 40px;
-      border: 1.5px solid var(--border-strong);
-      border-top-color: var(--accent); border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+  #page-loader.fade-out {
+      opacity: 0;
+      pointer-events: none;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  #page-loader.hidden {
+      display: none;
+  }
+
+  /* Carousel slides */
+  .pl-slide {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      transform: scale(1.04);
+      transition: opacity 0.18s ease, transform 6s ease;
+      will-change: opacity, transform;
+  }
+  .pl-slide.pl-active {
+      opacity: 1;
+      transform: scale(1);
+  }
+
+  /* Vignette overlay on loader */
+  .pl-vignette {
+      position: absolute; inset: 0; pointer-events: none; z-index: 2;
+      background: radial-gradient(120% 90% at 50% 50%, transparent 25%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.92) 100%);
+  }
+
+  /* Grain on loader */
+  .pl-grain {
+      position: absolute; inset: 0; pointer-events: none; z-index: 3; opacity: 0.07;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+      background-size: 120px 120px;
+  }
+
+  /* Loader UI elements */
+  .pl-ui {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: clamp(40px, 7vh, 80px);
+      pointer-events: none;
+  }
+
+  .pl-wordmark {
+      font-family: var(--ui-font);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 28px;
+      animation: pl-fade-in 0.6s ease 0.3s both;
+  }
+
+  .pl-progress-track {
+      width: clamp(80px, 18vw, 160px);
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 1px;
+      overflow: hidden;
+      animation: pl-fade-in 0.6s ease 0.5s both;
+  }
+  .pl-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 1px;
+      transition: width 0.25s ease;
+  }
+
+  /* Title caption */
+  .pl-caption {
+      position: absolute;
+      bottom: clamp(40px, 7vh, 80px);
+      left: 0; right: 0;
+      text-align: center;
+      font-family: var(--body-font);
+      font-size: clamp(13px, 1.8vw, 17px);
+      font-style: italic;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.02em;
+      z-index: 4;
+      padding-bottom: 52px;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      animation: pl-fade-in 0.6s ease 0.4s both;
+  }
+
+  /* Top corner wordmark */
+  .pl-corner {
+      position: absolute;
+      top: calc(env(safe-area-inset-top) + clamp(12px, 2vh, 18px));
+      left: clamp(14px, 2.4vw, 24px);
+      z-index: 4;
+      font-family: var(--ui-font);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      animation: pl-fade-in 0.5s ease 0.2s both;
+  }
+  .pl-corner span { color: var(--accent); }
+
+  /* Slide counter */
+  .pl-counter {
+      position: absolute;
+      top: calc(env(safe-area-inset-top) + clamp(12px, 2vh, 18px));
+      right: clamp(14px, 2.4vw, 24px);
+      z-index: 4;
+      font-family: var(--ui-font);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+      animation: pl-fade-in 0.5s ease 0.2s both;
+  }
+
+  @keyframes pl-fade-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Legacy .loader-overlay kept for backward compat, hidden */
+  .loader-overlay { display: none !important; }
 
   /* ===================================
      GOOEY CURSOR
@@ -975,7 +1097,25 @@
       </button>
   </div>
   
-  <div id="loader" class="loader-overlay active"><div class="loader-spinner"></div></div>
+  <!-- ═══════════════════════════════════════
+       PAGE LOADER — cinematic image carousel
+       ═══════════════════════════════════════ -->
+  <div id="page-loader">
+    <!-- Slides injected by JS -->
+    <div class="pl-vignette"></div>
+    <div class="pl-grain"></div>
+    <div class="pl-corner">wolfie<span>.</span>life</div>
+    <div class="pl-counter" id="pl-counter">—</div>
+    <div class="pl-caption" id="pl-caption"></div>
+    <div class="pl-ui">
+      <div class="pl-wordmark">loading</div>
+      <div class="pl-progress-track">
+        <div class="pl-progress-fill" id="pl-progress"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Legacy loader (kept for JS compat) -->
+  <div id="loader" class="loader-overlay"></div>
   <div class="hud hud-left" title="View README">v1.4.1</div>
   <div class="hud hud-right" id="coordsMount">x 0 • y 0</div>
 
@@ -4133,13 +4273,95 @@
 </script>
 
 <script>
-window.addEventListener('load', () => {
-    const loader = document.getElementById('loader');
-    if (loader) {
-        loader.classList.remove('active');
-        setTimeout(() => { loader.style.display = 'none'; }, 300);
+// ═══════════════════════════════════════════════════════════
+//  CINEMATIC PAGE LOADER — full-viewport carousel
+// ═══════════════════════════════════════════════════════════
+(function () {
+    // Pull image URLs from SEED (defined earlier in the script)
+    // We pick a random selection of ~16 images to cycle through
+    function getLoaderImages() {
+        if (typeof SEED === 'undefined' || !Array.isArray(SEED)) return [];
+        const shuffled = [...SEED].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, 18).map(s => ({ src: s.src, title: s.title }));
     }
-});
+
+    const loader    = document.getElementById('page-loader');
+    const caption   = document.getElementById('pl-caption');
+    const counter   = document.getElementById('pl-counter');
+    const progress  = document.getElementById('pl-progress');
+
+    if (!loader) return;
+
+    const images = getLoaderImages();
+    const total  = images.length;
+    if (total === 0) { loader.classList.add('fade-out'); return; }
+
+    // ── Create slide elements ──────────────────────────────
+    const slides = images.map((img, i) => {
+        const el = document.createElement('div');
+        el.className = 'pl-slide';
+        el.style.backgroundImage = `url(${img.src})`;
+        el.style.zIndex = 1;
+        loader.insertBefore(el, loader.querySelector('.pl-vignette'));
+        return el;
+    });
+
+    let current   = 0;
+    let done      = false;
+    let interval  = null;
+    const SPEED   = 260; // ms per slide
+
+    function showSlide(idx) {
+        slides.forEach((s, i) => s.classList.toggle('pl-active', i === idx));
+        const img = images[idx];
+        if (caption) caption.textContent = img.title.replace(/([a-z])([A-Z])/g, '$1 $2');
+        if (counter) counter.textContent = (idx + 1).toString().padStart(2, '0') + ' / ' + total.toString().padStart(2, '0');
+        if (progress) progress.style.width = ((idx + 1) / total * 100) + '%';
+    }
+
+    function tick() {
+        if (done) return;
+        current = (current + 1) % total;
+        showSlide(current);
+    }
+
+    // Show first slide immediately
+    showSlide(0);
+    interval = setInterval(tick, SPEED);
+
+    // ── Dismiss when grid is loaded ────────────────────────
+    function dismiss() {
+        if (done) return;
+        done = true;
+        clearInterval(interval);
+        // Fill progress bar to 100%
+        if (progress) progress.style.width = '100%';
+        // Short hold so last frame feels intentional, then fade
+        setTimeout(() => {
+            loader.classList.add('fade-out');
+            setTimeout(() => { loader.classList.add('hidden'); }, 950);
+        }, 380);
+    }
+
+    // Listen for the app's own loader removal signal
+    window.addEventListener('load', () => setTimeout(dismiss, 600));
+
+    // Also watch the legacy #loader for its active class being removed
+    // (the React app does: loader.classList.remove('active'))
+    const legacyLoader = document.getElementById('loader');
+    if (legacyLoader) {
+        const obs = new MutationObserver(() => {
+            if (!legacyLoader.classList.contains('active')) {
+                obs.disconnect();
+                dismiss();
+            }
+        });
+        obs.observe(legacyLoader, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // Safety: dismiss after 8s no matter what
+    setTimeout(dismiss, 8000);
+})();
 </script>
 </body>
 </html>

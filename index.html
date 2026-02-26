@@ -11,10 +11,6 @@
 <link rel="modulepreload" href="https://esm.sh/@react-three/fiber@8.16.0?deps=react@18.3.1,react-dom@18.3.1,three@0.160.1">
 <link rel="modulepreload" href="https://esm.sh/gsap@3.12.5">
 
-<title>Wolfgang</title>
-<link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAIAA8AQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAQNJREFUeJxjYKAQMMIYlzJ5/qNL6k3/wkhIjgWmQCFQh4GBgYGBjZmRgZ2dmeHnz78Mlxgu/2dgYGCAySGDSwxX/utN/8LIyMDAwPBynQncBlEuFgZGDQGG/zc+MLz+9gev88WDzjCyMDAwMHz/ilD44sdfBv6zbxg+/vzL8OsvhssxAMSALwgDvjMwMHxk+E1QI6oBX/E7lSQXkArg0binVJGwh5GAS/d9RhQDGBgYGDZnyhJliO/0x3B9jOiSq+Ik8RoStug5ih4MAxgYGBgWBoliNSR+3WsM9VgNYGBgYJjhLohiSMbO9zjV4gT91rz/+6158XqJBZ/k969/SbaUZAAABDJTRS3nencAAAAASUVORK5CYII=" sizes="any">
-<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImhnIiBjeD0iNDIlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZjBiODQwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjZDQ4ODBhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhiNGEwMCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9InNvZnQiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUFscGhhIiBzdGREZXZpYXRpb249IjAuNSIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDwhLS0gSGVhcnQgcGF0aCBjZW50ZXJlZCBpbiAzMngzMiwgc2xpZ2h0bHkgb3JnYW5pYyBwcm9wb3J0aW9ucyAtLT4KICA8cGF0aCBmaWx0ZXI9InVybCgjc29mdCkiCiAgICBkPSJNMTYgMjcuMiBDMTYgMjcuMiA0IDE5LjIgNCAxMS42IEM0IDcuNCA3LjIgNCAxMS4yIDQgQzEzLjQgNCAxNS4yIDUuMiAxNiA2LjIgQzE2LjggNS4yIDE4LjYgNCAyMC44IDQgQzI0LjggNCAyOCA3LjQgMjggMTEuNiBDMjggMTkuMiAxNiAyNy4yIDE2IDI3LjJaIgogICAgZmlsbD0idXJsKCNoZykiCiAgLz4KPC9zdmc+" type="image/svg+xml">
-
 <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin>
 <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -786,7 +782,7 @@
       .sheet { width: min(98vw, 560px); }
       .listview-root .portfolio-container { padding-top: calc(4rem + 80px); }
       .portfolio-container { padding: 0 1rem; }
-      .project-item { grid-template-columns: 30px 1fr 1fr 32px; grid-column-gap: 0.75rem; }
+      .project-item { grid-template-columns: 30px 1fr 1fr; grid-column-gap: 1rem; }
       .project-data:not(.artist):not(.album) { display: none; }
       .background-image { width: 400px; height: 300px; }
       .view-toggle, .zoom-presets { gap: 4px; padding: 4px; }
@@ -904,46 +900,34 @@
      On touch: show a persistent edit icon per row, tap row to expand
      into a full-width edit panel inside the row itself.
      =================================== */
-  /* Hide mobile-edit-btn on desktop */
-  .mobile-edit-btn { display: none; }
-
   @media (pointer: coarse) {
+      /* Always-visible edit affordance — small pencil chip on the right */
       .editable-cell { cursor: default; gap: 0; padding: 0; margin: 0; }
       .editable-cell:hover { color: inherit !important; background: none !important; }
-      .edit-pencil { display: none !important; } /* hidden — dedicated button instead */
+      .edit-pencil { display: none !important; } /* hidden — tap target on row instead */
 
-      /* Row tap area — scroll-with-image, no auto-edit */
+      /* Row tap area — entire row is the tap target, shows edit icon right-side */
       .project-item.is-editable {
           position: relative;
-          -webkit-tap-highlight-color: transparent;
-          touch-action: manipulation;
-      }
-
-      /* Mobile edit trigger button — shows on each editable row */
-      .mobile-edit-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          appearance: none;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.12);
-          border-radius: 4px;
-          color: var(--ink-3);
-          width: 28px;
-          height: 28px;
-          flex-shrink: 0;
           cursor: pointer;
-          transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-          -webkit-tap-highlight-color: transparent;
+          -webkit-tap-highlight-color: rgba(218,165,32,0.08);
           touch-action: manipulation;
       }
-      .mobile-edit-btn svg { width: 12px; height: 12px; }
-      .mobile-edit-btn:active,
-      .project-item.mobile-editing .mobile-edit-btn {
-          background: rgba(218,165,32,0.15);
-          border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-          color: var(--accent);
+      /* Persistent edit affordance chip in right gutter */
+      .project-item.is-editable::after {
+          content: "✎";
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 14px;
+          color: var(--ink-3);
+          opacity: 0.35;
+          pointer-events: none;
+          transition: opacity 0.15s ease;
+          line-height: 1;
       }
+      .project-item.is-editable:active::after { opacity: 0.8; }
 
       /* Expanded edit panel — overrides the grid layout */
       .project-item.mobile-editing {
@@ -956,7 +940,8 @@
           border-bottom-color: color-mix(in srgb, var(--accent) 30%, transparent);
           min-height: unset;
       }
-      /* When editing, show all project-data normally in first row */
+      .project-item.mobile-editing::after { display: none; }
+      /* Hide the normal grid columns when expanded */
       .project-item.mobile-editing .project-data { display: none !important; }
 
       /* The mobile edit panel itself */
@@ -1258,196 +1243,196 @@
   } from "https://esm.sh/@react-three/fiber@8.16.0?deps=react@18.3.1,react-dom@18.3.1,three@0.160.1";
   import gsap from "https://esm.sh/gsap@3.12.5";
   const SEED = [
-      { src: "https://i.ibb.co/rRLkbvPw/wakinguptothisface.webp", title: "wakinguptothisface", caption: "" },
-      { src: "https://i.ibb.co/35wn6dyd/sleepies.webp", title: "sleepies", caption: "" },
-      { src: "https://i.ibb.co/7xVk4kZh/realitycheck.webp", title: "realitycheck", caption: "" },
-      { src: "https://i.ibb.co/8g6xb5xh/pleased2.webp", title: "pleased2", caption: "" },
-      { src: "https://i.ibb.co/q3w23YbL/pleased.webp", title: "pleased", caption: "" },
-      { src: "https://i.ibb.co/5Xf4pWgs/penguin056.webp", title: "penguin056", caption: "" },
-      { src: "https://i.ibb.co/HDpMfC96/penguin003.webp", title: "penguin003", caption: "" },
-      { src: "https://i.ibb.co/Xx5xySV3/penguin002.webp", title: "penguin002", caption: "" },
-      { src: "https://i.ibb.co/wFWhPJ1t/notaregulationseatbeltbutgreatlapwarmer.webp", title: "notaregulationseatbeltbutgreatlapwarmer", caption: "" },
-      { src: "https://i.ibb.co/v4SyZC8n/newviews.webp", title: "newviews", caption: "" },
-      { src: "https://i.ibb.co/ynXcRw2w/nightnight.webp", title: "nightnight", caption: "" },
-      { src: "https://i.ibb.co/b5Y8SMh6/makingitwork.webp", title: "makingitwork", caption: "" },
-      { src: "https://i.ibb.co/JR1SH0g3/justmaterialexcessweknowwhatmyfocusis.webp", title: "justmaterialexcessweknowwhatmyfocusis", caption: "" },
-      { src: "https://i.ibb.co/C5T1nJzt/lowbudgetjoy.webp", title: "lowbudgetjoy", caption: "" },
-      { src: "https://i.ibb.co/BKFKrbpj/instantlyourfavoritepasttime.webp", title: "instantlyourfavoritepasttime", caption: "" },
-      { src: "https://i.ibb.co/5WSCNCy9/jeepsaturdaymornings.webp", title: "jeepsaturdaymornings", caption: "" },
-      { src: "https://i.ibb.co/LzvMnZxL/earinfection.webp", title: "earinfection", caption: "" },
-      { src: "https://i.ibb.co/LdfyKRHH/cozyinjeep.webp", title: "cozyinjeep", caption: "" },
-      { src: "https://i.ibb.co/hnVKLCH/couldbeworse.webp", title: "couldbeworse", caption: "" },
-      { src: "https://i.ibb.co/HLnKwLFc/cleandoggy.webp", title: "cleandoggy", caption: "" },
-      { src: "https://i.ibb.co/d4H86rR9/classic005.webp", title: "classic005", caption: "" },
-      { src: "https://i.ibb.co/SXcTfppx/classicwolfgangblur.webp", title: "classicwolfgangblur", caption: "" },
-      { src: "https://i.ibb.co/ccwfC9Zc/anywherehegoes.webp", title: "anywherehegoes", caption: "" },
-      { src: "https://i.ibb.co/tpD56r7n/backinbrooklyn.webp", title: "backinbrooklyn", caption: "" },
-      { src: "https://i.ibb.co/84scKcfG/beans.jpg", title: "beans", caption: "" },
-      { src: "https://i.ibb.co/27c34fPD/allstitchedup.jpg", title: "allstitchedup", caption: "" },
-      { src: "https://i.ibb.co/BV4C58zX/whenyouletastrangerintoyourhomeandtheygoforyourfridge.jpg", title: "whenyouletastrangerintoyourhomeandtheygoforyourfridge", caption: "" },
-      { src: "https://i.ibb.co/rfKXyv3q/theveryfirstofclassicwolfgang.jpg", title: "theveryfirstofclassicwolfgang", caption: "" },
-      { src: "https://i.ibb.co/x8DxKNgy/someoneissnoring.jpg", title: "someoneissnoring", caption: "" },
-      { src: "https://i.ibb.co/nsp6BwTS/socks1.jpg", title: "socks1", caption: "" },
-      { src: "https://i.ibb.co/hJRKrSTv/socks2.jpg", title: "socks2", caption: "" },
-      { src: "https://i.ibb.co/PGxhw6SC/pumpkin12345.jpg", title: "pumpkin12345", caption: "" },
-      { src: "https://i.ibb.co/SDBHyLHB/park123.jpg", title: "park123", caption: "" },
-      { src: "https://i.ibb.co/gMfpCbRW/owl.jpg", title: "owl", caption: "" },
-      { src: "https://i.ibb.co/gqbRRr5/mysweetpumpkin.jpg", title: "mysweetpumpkin", caption: "" },
-      { src: "https://i.ibb.co/DDyHhwTm/lostinqueens.jpg", title: "lostinqueens", caption: "" },
-      { src: "https://i.ibb.co/SDb2ZDG1/longboy.jpg", title: "longboy", caption: "" },
-      { src: "https://i.ibb.co/v6qr7CxQ/gorgeousgoodboy.jpg", title: "gorgeousgoodboy", caption: "" },
-      { src: "https://i.ibb.co/TMxmFknH/fallinginlove1.jpg", title: "fallinginlove1", caption: "" },
-      { src: "https://i.ibb.co/YBQ5pvfW/fellinlove1.jpg", title: "fellinlove1", caption: "" },
-      { src: "https://i.ibb.co/gb3mMDBt/wolfgangsfirsttimeinthejeep.webp", title: "wolfgangsfirsttimeinthejeep", caption: "" },
-      { src: "https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp", title: "mamaweremovingout", caption: "" },
-      { src: "https://i.ibb.co/G4qDyqZH/surviorandthriverfullcolor.webp", title: "surviorandthriverfullcolor", caption: "" },
-      { src: "https://i.ibb.co/VYC0hyxW/surviorandthriver.webp", title: "surviorandthriver", caption: "" },
-      { src: "https://i.ibb.co/rRfMt4Fj/happyboy.webp", title: "happyboy", caption: "" },
-      { src: "https://i.ibb.co/0Rt0KW93/wolfgangsfinestworkmoment.webp", title: "wolfgangsfinestworkmoment", caption: "" },
-      { src: "https://i.ibb.co/LXBkfzbw/wolfgangsfinestwork.webp", title: "wolfgangsfinestwork", caption: "" },
-      { src: "https://i.ibb.co/rKbH2FFx/sweetestwolfgang.webp", title: "sweetestwolfgang", caption: "" },
-      { src: "https://i.ibb.co/JwdP8xFc/floating.webp", title: "floating", caption: "" },
-      { src: "https://i.ibb.co/DsT5Ppk/lostinqueens.webp", title: "lostinqueens", caption: "" },
-      { src: "https://i.ibb.co/LXR70BTD/wolfieboop.webp", title: "wolfieboop", caption: "" },
-      { src: "https://i.ibb.co/7tm2QB7X/whereiswolfgang.webp", title: "whereiswolfgang", caption: "" },
-      { src: "https://i.ibb.co/d0MxCR6m/delicious.webp", title: "delicious", caption: "" },
-      { src: "https://i.ibb.co/Jj1Pc7bs/theabsolutecutestthingihaveeverseen.webp", title: "theabsolutecutestthingihaveeverseen", caption: "" },
-      { src: "https://i.ibb.co/gbwLMFZw/snoopboop.webp", title: "snoopboop", caption: "" },
-      { src: "https://i.ibb.co/6J8QRGXg/sothisiswolfgang.webp", title: "sothisiswolfgang", caption: "" },
-      { src: "https://i.ibb.co/9HkZnDDn/wolfgangserenade.webp", title: "wolfgangserenade", caption: "" },
-      { src: "https://i.ibb.co/m5sZdcgC/youbelongtomenow.webp", title: "youbelongtomenow", caption: "" },
-      { src: "https://i.ibb.co/gQPNJXc/xlnexttimeplease.webp", title: "xlnexttimeplease", caption: "" },
-      { src: "https://i.ibb.co/qLJnHFK3/workinghard.webp", title: "workinghard", caption: "" },
-      { src: "https://i.ibb.co/BX5RVPg/wolfgangownsallofmyhoodies.webp", title: "wolfgangownsallofmyhoodies", caption: "" },
-      { src: "https://i.ibb.co/35xyhPFJ/wolfgangkeepingthingscalm.webp", title: "wolfgangkeepingthingscalm", caption: "" },
-      { src: "https://i.ibb.co/mrsF2PP2/whereiswolfgang.webp", title: "whereiswolfgang", caption: "" },
-      { src: "https://i.ibb.co/35ngjfQK/wheneverthingaroundyouisfallingapart.webp", title: "wheneverthingaroundyouisfallingapart", caption: "" },
-      { src: "https://i.ibb.co/WvSsz44X/whendadworksfromhomesoyougettheenviablewindowofficewithfreemassuese.webp", title: "whendadworksfromhomesoyougettheenviablewindowofficewithfreemassuese", caption: "" },
-      { src: "https://i.ibb.co/HDvw7qqm/wegmansnyc.webp", title: "wegmansnyc", caption: "" },
-      { src: "https://i.ibb.co/9kCB3w9J/wawa654.webp", title: "wawa654", caption: "" },
-      { src: "https://i.ibb.co/MXkwD0q/wawa234.webp", title: "wawa234", caption: "" },
-      { src: "https://i.ibb.co/8DMQ7yXX/water98765432.webp", title: "water98765432", caption: "" },
-      { src: "https://i.ibb.co/4310LRy/water4567.webp", title: "water4567", caption: "" },
-      { src: "https://i.ibb.co/Sw4Y7kj1/warmly.webp", title: "warmly", caption: "" },
-      { src: "https://i.ibb.co/cc6TDDwc/warminguptothewonderofwolfgang.webp", title: "warminguptothewonderofwolfgang", caption: "" },
-      { src: "https://i.ibb.co/4nKyYjhT/walkwolfgangsway.webp", title: "walkwolfgangsway", caption: "" },
-      { src: "https://i.ibb.co/ZRH2xfpx/vet-trip.webp", title: "vet trip", caption: "" },
-      { src: "https://i.ibb.co/twNdHLNd/vera2.webp", title: "vera2", caption: "" },
-      { src: "https://i.ibb.co/7Nb3kzfB/vera1.webp", title: "vera1", caption: "" },
-      { src: "https://i.ibb.co/8Wbt6Jw/uhmtotallyfellasleepwithselfiemodereadyohlookathispawsomg.webp", title: "uhmtotallyfellasleepwithselfiemodereadyohlookathispawsomg", caption: "" },
-      { src: "https://i.ibb.co/KjCG862F/traininghumanonmyfavoritethingtodoperiod.webp", title: "traininghumanonmyfavoritethingtodoperiod", caption: "" },
-      { src: "https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp", title: "thisthisisthevalidationiseek", caption: "" },
-      { src: "https://i.ibb.co/83SsR99/thislittledudeexudedsomuchconfidence.webp", title: "thislittledudeexudedsomuchconfidence", caption: "" },
-      { src: "https://i.ibb.co/gMPHfGpX/thekitchen.webp", title: "thekitchen", caption: "" },
-      { src: "https://i.ibb.co/C3GsbwmT/thegoattheking.webp", title: "thegoattheking", caption: "" },
-      { src: "https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp", title: "sunlightsweetheart", caption: "" },
-      { src: "https://i.ibb.co/PvvP2j91/stolesomeofdadsicecream.webp", title: "stolesomeofdadsicecream", caption: "" },
-      { src: "https://i.ibb.co/zWbFdGF8/sowolfgangdiscoveredpupcupsatprettymucheverysheetz.webp", title: "sowolfgangdiscoveredpupcupsatprettymucheverysheetz", caption: "" },
-      { src: "https://i.ibb.co/9k9fX8wp/somewhere987654.webp", title: "somewhere987654", caption: "" },
-      { src: "https://i.ibb.co/9kggF1YH/somewhere765432.webp", title: "somewhere765432", caption: "" },
-      { src: "https://i.ibb.co/Vc6RjkkH/somewhere234567.webp", title: "somewhere234567", caption: "" },
-      { src: "https://i.ibb.co/5xFrKhBM/someoneorderaburgerforbreakfastwhilebrokendown.webp", title: "someoneorderaburgerforbreakfastwhilebrokendown", caption: "" },
-      { src: "https://i.ibb.co/HfC0qCGB/shitsupervisor.webp", title: "shitsupervisor", caption: "" },
-      { src: "https://i.ibb.co/DHyNdP33/saturdaymornings.webp", title: "saturdaymornings", caption: "" },
-      { src: "https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp", title: "oneofwolfgangsfavoriteplaces", caption: "" },
-      { src: "https://i.ibb.co/4rnzNzt/oncetheworkisdone2.webp", title: "oncetheworkisdone2", caption: "" },
-      { src: "https://i.ibb.co/XkGPG8D3/oncetheworkisdone.webp", title: "oncetheworkisdone", caption: "" },
-      { src: "https://i.ibb.co/CFN84JX/okyouwin.webp", title: "okyouwin", caption: "" },
-      { src: "https://i.ibb.co/HpxfkCrY/okfine.webp", title: "okfine", caption: "" },
-      { src: "https://i.ibb.co/NdZQSPdr/okayletsgo.webp", title: "okayletsgo", caption: "" },
-      { src: "https://i.ibb.co/sv5nN8nY/ohwhatisthismine.webp", title: "ohwhatisthismine", caption: "" },
-      { src: "https://i.ibb.co/q3Tk5HWP/ohwhatisthis.webp", title: "ohwhatisthis", caption: "" },
-      { src: "https://i.ibb.co/670vRLTm/ohwhat.webp", title: "ohwhat", caption: "" },
-      { src: "https://i.ibb.co/zV0b262F/ohwater.webp", title: "ohwater", caption: "" },
-      { src: "https://i.ibb.co/LdgdfZDM/ohformewhyyoushoulnthave.webp", title: "ohformewhyyoushoulnthave", caption: "" },
-      { src: "https://i.ibb.co/5gPCWkDf/nownamedgivenanappropriatemohawk.webp", title: "nownamedgivenanappropriatemohawk", caption: "" },
-      { src: "https://i.ibb.co/B5NW72rq/noleashfromdayone.webp", title: "noleashfromdayone", caption: "" },
-      { src: "https://i.ibb.co/TDHdkN3w/mypal.webp", title: "mypal", caption: "" },
-      { src: "https://i.ibb.co/Ngj3qTkw/mylittleguy.webp", title: "mylittleguy", caption: "" },
-      { src: "https://i.ibb.co/qFVszwVN/mylittledonut.webp", title: "mylittledonut", caption: "" },
-      { src: "https://i.ibb.co/bjK8FYHX/mydreamwastoownacafejustforwolfietohangoutin.webp", title: "mydreamwastoownacafejustforwolfietohangoutin", caption: "" },
-      { src: "https://i.ibb.co/Y7cJj7Vc/muralist.webp", title: "muralist", caption: "" },
-      { src: "https://i.ibb.co/d0bT8TBD/metallicafanprobably.webp", title: "metallicafanprobably", caption: "" },
-      { src: "https://i.ibb.co/zh2ZrzgJ/lowestoflowsbutstabilityforwolfgang.webp", title: "lowestoflowsbutstabilityforwolfgang", caption: "" },
-      { src: "https://i.ibb.co/M5jT7kWj/lovethisface.webp", title: "lovethisface", caption: "" },
-      { src: "https://i.ibb.co/nNKFYj1B/loveshadowheart.webp", title: "loveshadowheart", caption: "" },
-      { src: "https://i.ibb.co/JjVcwMw8/lovebruh.webp", title: "lovebruh", caption: "" },
-      { src: "https://i.ibb.co/bRy3QhNL/tabletoppoodle.webp", title: "tabletoppoodle", caption: "" },
-      { src: "https://i.ibb.co/vCYxMRbG/lookiftheysayanythingiamheretokeepyouontask.webp", title: "lookiftheysayanythingiamheretokeepyouontask", caption: "" },
-      { src: "https://i.ibb.co/JwmvLQmx/likemyexgirlfriendhoodiereowner.webp", title: "likemyexgirlfriendhoodiereowner", caption: "" },
-      { src: "https://i.ibb.co/21Npmk7W/lifestylegoalsachieved.webp", title: "lifestylegoalsachieved", caption: "" },
-      { src: "https://i.ibb.co/RGJjnMpL/laleedaa.webp", title: "laleedaa", caption: "" },
-      { src: "https://i.ibb.co/LXbb1yqN/jobwelldone.webp", title: "jobwelldone", caption: "" },
-      { src: "https://i.ibb.co/jZ66mwX7/itsthisexactlookthatgetsmeeverysingletime.webp", title: "itsthisexactlookthatgetsmeeverysingletime", caption: "" },
-      { src: "https://i.ibb.co/Mm07h9F/ilovehim.webp", title: "ilovehim", caption: "" },
-      { src: "https://i.ibb.co/d4SkHwfB/icecream45678.webp", title: "icecream45678", caption: "" },
-      { src: "https://i.ibb.co/whFvFR24/hydratedandhappy.webp", title: "hydratedandhappy", caption: "" },
-      { src: "https://i.ibb.co/r2ynCVfQ/homeiswhereyourest.webp", title: "homeiswhereyourest", caption: "" },
-      { src: "https://i.ibb.co/Ldmrtb7t/hislittleblacklips.webp", title: "hislittleblacklips", caption: "" },
-      { src: "https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp", title: "hisfavoritecafe", caption: "" },
-      { src: "https://i.ibb.co/fVrBVSpn/hideyourdogatworkday.webp", title: "hideyourdogatworkday", caption: "" },
-      { src: "https://i.ibb.co/0RLXVg2g/hidaddy.webp", title: "hidaddy", caption: "" },
-      { src: "https://i.ibb.co/JjGbm5rh/heydaddy.webp", title: "heydaddy", caption: "" },
-      { src: "https://i.ibb.co/zWcGkYxT/haircut87654.webp", title: "haircut87654", caption: "" },
-      { src: "https://i.ibb.co/XZD5kPCs/haircut.webp", title: "haircut", caption: "" },
-      { src: "https://i.ibb.co/8L68BJFv/guardian.webp", title: "guardian", caption: "" },
-      { src: "https://i.ibb.co/7NBXqNfS/foreman.webp", title: "foreman", caption: "" },
-      { src: "https://i.ibb.co/YJbXh7S/fluffy.webp", title: "fluffy", caption: "" },
-      { src: "https://i.ibb.co/XxZ9sYZc/fivehundredmileroadtripfromwestvirginia.webp", title: "fivehundredmileroadtripfromwestvirginia", caption: "" },
-      { src: "https://i.ibb.co/S45KWTfz/firstsnow.webp", title: "firstsnow", caption: "" },
-      { src: "https://i.ibb.co/93zWzBDm/firesidefavorites2.webp", title: "firesidefavorites2", caption: "" },
-      { src: "https://i.ibb.co/mVKrQG5s/firesidefavorites.webp", title: "firesidefavorites", caption: "" },
-      { src: "https://i.ibb.co/nNJTsKj4/everyherohasagoodoriginstory.webp", title: "everyherohasagoodoriginstory", caption: "" },
-      { src: "https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp", title: "elephantbywolfgang", caption: "" },
-      { src: "https://i.ibb.co/NDk7kcW/drivethruluxurysuite.webp", title: "drivethruluxurysuite", caption: "" },
-      { src: "https://i.ibb.co/3YQQ7hBK/drivethru.webp", title: "drivethru", caption: "" },
-      { src: "https://i.ibb.co/v9qfSnz/donthidebehindpillowbecomepillow.webp", title: "donthidebehindpillowbecomepillow", caption: "" },
-      { src: "https://i.ibb.co/SDxTXcYS/dinnerforwolfgang.webp", title: "dinnerforwolfgang", caption: "" },
-      { src: "https://i.ibb.co/XxvXrgTn/deersteakhedidnoteatit.webp", title: "deersteakhedidnoteatit", caption: "" },
-      { src: "https://i.ibb.co/XfJYXCw4/dailydrip.webp", title: "dailydrip", caption: "" },
-      { src: "https://i.ibb.co/yFLwD4nv/dadhastogotoameetingsimpromptucampingadventure.webp", title: "dadhastogotoameetingsimpromptucampingadventure", caption: "" },
-      { src: "https://i.ibb.co/fV6xyHmQ/couchsurfing.webp", title: "couchsurfing", caption: "" },
-      { src: "https://i.ibb.co/Kcfy2q4h/classic6543.webp", title: "classic6543", caption: "" },
-      { src: "https://i.ibb.co/4RLZnZR1/catshouse.webp", title: "catshouse", caption: "" },
-      { src: "https://i.ibb.co/Hy8XwrB/calminganywhere.webp", title: "calminganywhere", caption: "" },
-      { src: "https://i.ibb.co/4RfTWWkp/burgerkingindeed.webp", title: "burgerkingindeed", caption: "" },
-      { src: "https://i.ibb.co/twP8m5wP/buildingburgerking.webp", title: "buildingburgerking", caption: "" },
-      { src: "https://i.ibb.co/3yYzQLjP/braveboy.webp", title: "braveboy", caption: "" },
-      { src: "https://i.ibb.co/F4wPJkk8/beefdinneringravy.webp", title: "beefdinneringravy", caption: "" },
-      { src: "https://i.ibb.co/n8Q5B3NT/atleastthegravyisgood.webp", title: "atleastthegravyisgood", caption: "" },
-      { src: "https://i.ibb.co/5XLHJ6h3/assorgrasslass.webp", title: "assorgrasslass", caption: "" },
-      { src: "https://i.ibb.co/mrphxssF/angel987654.webp", title: "angel987654", caption: "" },
-      { src: "https://i.ibb.co/MxGzxSVk/wolfgang00.webp", title: "wolfgang00", caption: "" },
-      { src: "https://i.ibb.co/Swk4v5Tv/wolfgang000.webp", title: "wolfgang000", caption: "" },
-      { src: "https://i.ibb.co/KJ9pcSh/sowolfiehatedtherain.webp", title: "sowolfiehatedtherain", caption: "" },
-      { src: "https://i.ibb.co/nsKMYrDs/sowhatareyouupto.webp", title: "sowhatareyouupto", caption: "" },
-      { src: "https://i.ibb.co/9kNPNs8m/refresher.webp", title: "refresher", caption: "" },
-      { src: "https://i.ibb.co/wZ4jL08Y/precious.webp", title: "precious", caption: "" },
-      { src: "https://i.ibb.co/93bMTmpY/newtothis.webp", title: "newtothis", caption: "" },
-      { src: "https://i.ibb.co/xS9ChmKq/mowhawkwide.webp", title: "mowhawkwide", caption: "" },
-      { src: "https://i.ibb.co/xqv72y7c/mohawk.webp", title: "mohawk", caption: "" },
-      { src: "https://i.ibb.co/LdR4cY9N/loveinastoriabw.webp", title: "loveinastoriabw", caption: "" },
-      { src: "https://i.ibb.co/KxhDw7nS/loveinastoria.webp", title: "loveinastoria", caption: "" },
-      { src: "https://i.ibb.co/SXWPr4vf/likereallyreallyhatedtherain.webp", title: "likereallyreallyhatedtherain", caption: "" },
-      { src: "https://i.ibb.co/mCy62tkg/likereallyhatedtherain.webp", title: "likereallyhatedtherain", caption: "" },
-      { src: "https://i.ibb.co/BKymJdYK/itshisworld.webp", title: "itshisworld", caption: "" },
-      { src: "https://i.ibb.co/qYS6Vj2h/improviseasolutionreallydad.webp", title: "improviseasolutionreallydad", caption: "" },
-      { src: "https://i.ibb.co/bRs7ZLrj/improviseasolution.webp", title: "improviseasolution", caption: "" },
-      { src: "https://i.ibb.co/fVYPWX91/hoodie2.webp", title: "hoodie2", caption: "" },
-      { src: "https://i.ibb.co/dwNhjGPZ/hoodie1.webp", title: "hoodie1", caption: "" },
-      { src: "https://i.ibb.co/M5Pcy9f9/homemademeals.webp", title: "homemademeals", caption: "" },
-      { src: "https://i.ibb.co/N6dbht9r/hehateditsomuch.webp", title: "hehateditsomuch", caption: "" },
-      { src: "https://i.ibb.co/CknqHpK/happierinnewyork.webp", title: "happierinnewyork", caption: "" },
-      { src: "https://i.ibb.co/TBLbZpNb/fiveminuteslater.webp", title: "fiveminuteslater", caption: "" },
-      { src: "https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp", title: "firstfewweekswithwolfgang", caption: "" },
-      { src: "https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp", title: "curbyourdogbw", caption: "" },
-      { src: "https://i.ibb.co/HTqtChHv/curbyourdog.webp", title: "curbyourdog", caption: "" },
-      { src: "https://i.ibb.co/kV6CzpWS/comfort2.webp", title: "comfort2", caption: "" },
-      { src: "https://i.ibb.co/qfBwLrD/comfort1.webp", title: "comfort1", caption: "" },
-      { src: "https://i.ibb.co/qFjdZ2Py/classicwolfgang777.webp", title: "classicwolfgang777", caption: "" },
-      { src: "https://i.ibb.co/8n5gkh5v/classicwolfgang65.webp", title: "classicwolfgang65", caption: "" },
-      { src: "https://i.ibb.co/wF05mLW2/joyful.webp", title: "joyful", caption: "" },
-      { src: "https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp", title: "atthismomentidecidedhewasmine", caption: "" },
+      { src: "https://i.ibb.co/rRLkbvPw/wakinguptothisface.webp", title: "Waking Up to This Face", caption: "Some mornings you open your eyes and the whole world makes sense again." },
+      { src: "https://i.ibb.co/35wn6dyd/sleepies.webp", title: "Sleepies", caption: "Deep in the business of doing absolutely nothing. A master at work." },
+      { src: "https://i.ibb.co/7xVk4kZh/realitycheck.webp", title: "Reality Check", caption: "He looked at me like he knew something I didn't. He probably did." },
+      { src: "https://i.ibb.co/8g6xb5xh/pleased2.webp", title: "Very Pleased, Actually", caption: "The sequel to pleased. If anything, even more pleased than before." },
+      { src: "https://i.ibb.co/q3w23YbL/pleased.webp", title: "Pleased", caption: "An expression that communicates full satisfaction with the current situation." },
+      { src: "https://i.ibb.co/5Xf4pWgs/penguin056.webp", title: "Little Penguin, Vol. III", caption: "The waddle era. Brief. Iconic. Never to be fully recaptured." },
+      { src: "https://i.ibb.co/HDpMfC96/penguin003.webp", title: "Little Penguin, Vol. II", caption: "Still figuring out how legs work. Maximum effort. Perfect form." },
+      { src: "https://i.ibb.co/Xx5xySV3/penguin002.webp", title: "Little Penguin, Vol. I", caption: "The original penguin pose. Where the saga begins." },
+      { src: "https://i.ibb.co/wFWhPJ1t/notaregulationseatbeltbutgreatlapwarmer.webp", title: "Not a Regulation Seatbelt", caption: "Technically not road-legal, but demonstrably the best possible use of a lap." },
+      { src: "https://i.ibb.co/v4SyZC8n/newviews.webp", title: "New Views", caption: "A fresh vantage point. Surveying what's his, which is everything." },
+      { src: "https://i.ibb.co/ynXcRw2w/nightnight.webp", title: "Night Night", caption: "He went down hard. No notes, no complaints, no further questions." },
+      { src: "https://i.ibb.co/b5Y8SMh6/makingitwork.webp", title: "Making It Work", caption: "Not ideal conditions. Ideal spirit. Wolfgang adapts." },
+      { src: "https://i.ibb.co/JR1SH0g3/justmaterialexcessweknowwhatmyfocusis.webp", title: "Just Material Excess", caption: "Surrounded by stuff. Unbothered. His focus remains singular and pure." },
+      { src: "https://i.ibb.co/C5T1nJzt/lowbudgetjoy.webp", title: "Low Budget Joy", caption: "Proof that the best moments cost nothing. He's had this energy since day one." },
+      { src: "https://i.ibb.co/BKFKrbpj/instantlyourfavoritepasttime.webp", title: "Instantly Our Favorite Pastime", caption: "Whatever this was, it became the thing we did. No discussion needed." },
+      { src: "https://i.ibb.co/5WSCNCy9/jeepsaturdaymornings.webp", title: "Jeep Saturday Mornings", caption: "The ritual. Windows down, ears back, nowhere particular to be." },
+      { src: "https://i.ibb.co/LzvMnZxL/earinfection.webp", title: "Ear Infection", caption: "He was very brave about it and also very aware that he deserved extra treats." },
+      { src: "https://i.ibb.co/LdfyKRHH/cozyinjeep.webp", title: "Cozy in the Jeep", caption: "Found his corner, claimed it, made it his own. Classic Wolfgang." },
+      { src: "https://i.ibb.co/hnVKLCH/couldbeworse.webp", title: "Could Be Worse", caption: "Not perfect circumstances, but Wolfgang has always known how to settle in." },
+      { src: "https://i.ibb.co/HLnKwLFc/cleandoggy.webp", title: "Clean Doggy", caption: "Freshly bathed, reluctantly cooperative, undeniably radiant." },
+      { src: "https://i.ibb.co/d4H86rR9/classic005.webp", title: "A Classic, Vol. V", caption: "Part of the ongoing archive of Wolfgang at his most quintessentially himself." },
+      { src: "https://i.ibb.co/SXcTfppx/classicwolfgangblur.webp", title: "Classic Wolfgang, in Motion", caption: "Blurry because he was already somewhere else by the time the shutter clicked." },
+      { src: "https://i.ibb.co/ccwfC9Zc/anywherehegoes.webp", title: "Anywhere He Goes", caption: "He goes. That's the whole story. Wherever it is, he's already decided." },
+      { src: "https://i.ibb.co/tpD56r7n/backinbrooklyn.webp", title: "Back in Brooklyn", caption: "The city welcomed him like it always does. On his terms, at his pace." },
+      { src: "https://i.ibb.co/84scKcfG/beans.jpg", title: "Beans", caption: "The paws. The toe beans. Some things simply require no further explanation." },
+      { src: "https://i.ibb.co/27c34fPD/allstitchedup.jpg", title: "All Stitched Up", caption: "He came through it. Tough as ever, softer than he'd like to admit." },
+      { src: "https://i.ibb.co/BV4C58zX/whenyouletastrangerintoyourhomeandtheygoforyourfridge.jpg", title: "Straight to the Fridge", caption: "You open your home and he goes directly for the fridge. Every time. No shame." },
+      { src: "https://i.ibb.co/rfKXyv3q/theveryfirstofclassicwolfgang.jpg", title: "The Very First", caption: "Where it all started. Before all the lore, the legend, the extensive photo archive." },
+      { src: "https://i.ibb.co/x8DxKNgy/someoneissnoring.jpg", title: "Someone Is Snoring", caption: "Not naming names. But it was loud and it was peaceful and it was perfect." },
+      { src: "https://i.ibb.co/nsp6BwTS/socks1.jpg", title: "Socks, Vol. I", caption: "The white paws that launched a thousand close-up photographs." },
+      { src: "https://i.ibb.co/hJRKrSTv/socks2.jpg", title: "Socks, Vol. II", caption: "A follow-up study. The paws remain compelling. The research continues." },
+      { src: "https://i.ibb.co/PGxhw6SC/pumpkin12345.jpg", title: "Pumpkin Season", caption: "He tolerated the autumn photo session with quiet dignity and visible judgment." },
+      { src: "https://i.ibb.co/SDBHyLHB/park123.jpg", title: "At the Park", caption: "In his element. Alert, curious, already planning his next move." },
+      { src: "https://i.ibb.co/gMfpCbRW/owl.jpg", title: "The Owl", caption: "That look. Wide-eyed, wise, slightly alarmed. He saw something you didn't." },
+      { src: "https://i.ibb.co/gqbRRr5/mysweetpumpkin.jpg", title: "My Sweet Pumpkin", caption: "Autumn came and he wore it better than anyone else possibly could have." },
+      { src: "https://i.ibb.co/DDyHhwTm/lostinqueens.jpg", title: "Lost in Queens", caption: "Not really lost. He always knows exactly where he is. The human was lost." },
+      { src: "https://i.ibb.co/SDb2ZDG1/longboy.jpg", title: "Long Boy", caption: "Fully extended. Maximum length achieved. An impressive specimen at rest." },
+      { src: "https://i.ibb.co/v6qr7CxQ/gorgeousgoodboy.jpg", title: "Gorgeous Good Boy", caption: "Simply gorgeous. Simply good. Not a complicated situation." },
+      { src: "https://i.ibb.co/TMxmFknH/fallinginlove1.jpg", title: "Falling in Love, Vol. I", caption: "It happened fast. It happened completely. There was no going back from this." },
+      { src: "https://i.ibb.co/YBQ5pvfW/fellinlove1.jpg", title: "Already Fell", caption: "Past tense by the time this was taken. He had us the moment we met." },
+      { src: "https://i.ibb.co/gb3mMDBt/wolfgangsfirsttimeinthejeep.webp", title: "First Time in the Jeep", caption: "He took to it immediately. Claimed the passenger seat. Set the precedent." },
+      { src: "https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp", title: "Mama, We're Moving Out", caption: "New chapter. New address. Same Wolfgang, ready for whatever comes next." },
+      { src: "https://i.ibb.co/G4qDyqZH/surviorandthriverfullcolor.webp", title: "Survivor and Thriver", caption: "Full color. Full life. He came through things and came out brighter." },
+      { src: "https://i.ibb.co/VYC0hyxW/surviorandthriver.webp", title: "Survivor and Thriver", caption: "He's been through it. You'd never know. He carries it lightly, if at all." },
+      { src: "https://i.ibb.co/rRfMt4Fj/happyboy.webp", title: "Happy Boy", caption: "Joy, undiluted. This is what it looks like when a dog is just genuinely happy." },
+      { src: "https://i.ibb.co/0Rt0KW93/wolfgangsfinestworkmoment.webp", title: "His Finest Work Moment", caption: "Caught mid-contribution to the workflow. His presence elevated everything." },
+      { src: "https://i.ibb.co/LXBkfzbw/wolfgangsfinestwork.webp", title: "Wolfgang's Finest Work", caption: "The output speaks for itself. A natural collaborator. An absolute asset." },
+      { src: "https://i.ibb.co/rKbH2FFx/sweetestwolfgang.webp", title: "Sweetest Wolfgang", caption: "At his absolute softest. This version of him should be studied and preserved." },
+      { src: "https://i.ibb.co/JwdP8xFc/floating.webp", title: "Floating", caption: "Unbothered, weightless, somewhere between sleep and a very pleasant thought." },
+      { src: "https://i.ibb.co/DsT5Ppk/lostinqueens.webp", title: "Lost in Queens, Again", caption: "A return to Queens. A return to that look. The borough suits him." },
+      { src: "https://i.ibb.co/LXR70BTD/wolfieboop.webp", title: "The Boop", caption: "Someone booped the snoot. He allowed it. High honor, rarely granted." },
+      { src: "https://i.ibb.co/7tm2QB7X/whereiswolfgang.webp", title: "Where Is Wolfgang?", caption: "He's there. He's always there. You just have to know where to look." },
+      { src: "https://i.ibb.co/d0MxCR6m/delicious.webp", title: "Delicious", caption: "Whatever it was, it was good. He has never lied about food." },
+      { src: "https://i.ibb.co/Jj1Pc7bs/theabsolutecutestthingihaveeverseen.webp", title: "The Absolute Cutest Thing", caption: "That's it. That's the entire caption. No hyperbole. Just fact." },
+      { src: "https://i.ibb.co/gbwLMFZw/snoopboop.webp", title: "Snoop Boop", caption: "The nose leads the way. He's investigating. This is serious business." },
+      { src: "https://i.ibb.co/6J8QRGXg/sothisiswolfgang.webp", title: "So This Is Wolfgang", caption: "Introducing him, as if an introduction were really necessary at this point." },
+      { src: "https://i.ibb.co/9HkZnDDn/wolfgangserenade.webp", title: "The Serenade", caption: "He sang. Or something close to it. The performance was unexpected and wonderful." },
+      { src: "https://i.ibb.co/m5sZdcgC/youbelongtomenow.webp", title: "You Belong to Me Now", caption: "The look that sealed it. Ownership was established without a word." },
+      { src: "https://i.ibb.co/gQPNJXc/xlnexttimeplease.webp", title: "XL Next Time, Please", caption: "He has opinions about sizing. They are reasonable. They have been noted." },
+      { src: "https://i.ibb.co/qLJnHFK3/workinghard.webp", title: "Working Hard", caption: "Contributing to the household in his own way. We respect the effort." },
+      { src: "https://i.ibb.co/BX5RVPg/wolfgangownsallofmyhoodies.webp", title: "He Owns All My Hoodies", caption: "Not borrowed. Not shared. Mine in name only. His by right." },
+      { src: "https://i.ibb.co/35xyhPFJ/wolfgangkeepingthingscalm.webp", title: "Keeping Things Calm", caption: "The house could be chaos. Wolfgang brings stillness. He is the anchor." },
+      { src: "https://i.ibb.co/mrsF2PP2/whereiswolfgang.webp", title: "Where Is He Now?", caption: "A game with no wrong answers. He's somewhere good. He always is." },
+      { src: "https://i.ibb.co/35ngjfQK/wheneverthingaroundyouisfallingapart.webp", title: "When Everything's Falling Apart", caption: "He shows up. Sits down. Stays. That's what he does. That's enough." },
+      { src: "https://i.ibb.co/WvSsz44X/whendadworksfromhomesoyougettheenviablewindowofficewithfreemassuese.webp", title: "The Window Office", caption: "Dad works from home. Wolfgang gets the window seat and a complimentary massage." },
+      { src: "https://i.ibb.co/HDvw7qqm/wegmansnyc.webp", title: "Wegmans NYC", caption: "He came, he saw the grocery store, he was not permitted inside, he judged everyone." },
+      { src: "https://i.ibb.co/9kCB3w9J/wawa654.webp", title: "Wawa, Vol. III", caption: "A third Wawa appearance. He has achieved consistent brand loyalty." },
+      { src: "https://i.ibb.co/MXkwD0q/wawa234.webp", title: "Wawa, Vol. II", caption: "Back at Wawa. His second home. No notes." },
+      { src: "https://i.ibb.co/8DMQ7yXX/water98765432.webp", title: "Water, Vol. IV", caption: "Still investigating water. The research remains inconclusive. He presses on." },
+      { src: "https://i.ibb.co/4310LRy/water4567.webp", title: "Water, Vol. II", caption: "A return to the water question. What is it? Can you eat it? These are the concerns." },
+      { src: "https://i.ibb.co/Sw4Y7kj1/warmly.webp", title: "Warmly", caption: "Tucked in, warmed up, radiating something soft and easy and good." },
+      { src: "https://i.ibb.co/cc6TDDwc/warminguptothewonderofwolfgang.webp", title: "Warming Up to the Wonder", caption: "It takes about thirty seconds. Then you understand everything." },
+      { src: "https://i.ibb.co/4nKyYjhT/walkwolfgangsway.webp", title: "Walk Wolfgang's Way", caption: "His pace, his route, his rules. You're just along for the experience." },
+      { src: "https://i.ibb.co/ZRH2xfpx/vet-trip.webp", title: "Vet Trip", caption: "He was professional about it. Cooperative enough. Deserved every single treat." },
+      { src: "https://i.ibb.co/twNdHLNd/vera2.webp", title: "With Vera, Vol. II", caption: "Another chapter with Vera. The dynamic between them, quietly documented." },
+      { src: "https://i.ibb.co/7Nb3kzfB/vera1.webp", title: "With Vera, Vol. I", caption: "The first time with Vera. Something good was already happening here." },
+      { src: "https://i.ibb.co/8Wbt6Jw/uhmtotallyfellasleepwithselfiemodereadyohlookathispawsomg.webp", title: "Selfie Mode Was Ready", caption: "He fell asleep mid-photo session. Look at those paws. We can't look away either." },
+      { src: "https://i.ibb.co/KjCG862F/traininghumanonmyfavoritethingtodoperiod.webp", title: "Training the Human", caption: "His favorite activity, bar none. The curriculum: patience, eye contact, treats." },
+      { src: "https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp", title: "This. This Is the Validation I Seek.", caption: "He found it. He didn't need to look far. It was right here the whole time." },
+      { src: "https://i.ibb.co/83SsR99/thislittledudeexudedsomuchconfidence.webp", title: "Exuded So Much Confidence", caption: "From day one. Tiny, confident, absolutely certain he was the main character." },
+      { src: "https://i.ibb.co/gMPHfGpX/thekitchen.webp", title: "The Kitchen", caption: "He supervises from the kitchen. Quality control. Standards are high." },
+      { src: "https://i.ibb.co/C3GsbwmT/thegoattheking.webp", title: "The GOAT. The King.", caption: "Not up for debate. The title was earned and it fits." },
+      { src: "https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp", title: "Sunlight Sweetheart", caption: "Caught in a golden moment, soft-lit and completely at ease." },
+      { src: "https://i.ibb.co/PvvP2j91/stolesomeofdadsicecream.webp", title: "Stole Some of Dad's Ice Cream", caption: "Not technically stole. Shared from. The distinction matters to no one, including him." },
+      { src: "https://i.ibb.co/zWbFdGF8/sowolfgangdiscoveredpupcupsatprettymucheverysheetz.webp", title: "The Sheetz Pup Cup Discovery", caption: "He found out Sheetz does pup cups. Now every Sheetz is mandatory. No exceptions." },
+      { src: "https://i.ibb.co/9k9fX8wp/somewhere987654.webp", title: "Somewhere, Vol. IV", caption: "Not the destination. Not the journey. Just the being there, somewhere good." },
+      { src: "https://i.ibb.co/9kggF1YH/somewhere765432.webp", title: "Somewhere, Vol. III", caption: "A third somewhere. He accumulates places like some dogs accumulate toys." },
+      { src: "https://i.ibb.co/Vc6RjkkH/somewhere234567.webp", title: "Somewhere, Vol. II", caption: "Still somewhere. Still Wolfgang. Still completely fine with everything." },
+      { src: "https://i.ibb.co/5xFrKhBM/someoneorderaburgerforbreakfastwhilebrokendown.webp", title: "Burger for Breakfast", caption: "The car broke down. Someone ordered a burger. This was not the worst morning." },
+      { src: "https://i.ibb.co/HfC0qCGB/shitsupervisor.webp", title: "Shift Supervisor", caption: "On duty. Observant. Extremely critical of how the work is going." },
+      { src: "https://i.ibb.co/DHyNdP33/saturdaymornings.webp", title: "Saturday Mornings", caption: "The best ones. Slow and warm and no agenda. He knows exactly what day it is." },
+      { src: "https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp", title: "One of His Favorite Places", caption: "He has a list. This place made the list. High praise from a discerning critic." },
+      { src: "https://i.ibb.co/4rnzNzt/oncetheworkisdone2.webp", title: "Once the Work Is Done, Vol. II", caption: "The sequel. Work finished, reward collected, position maintained indefinitely." },
+      { src: "https://i.ibb.co/XkGPG8D3/oncetheworkisdone.webp", title: "Once the Work Is Done", caption: "The moment the laptop closes. His moment begins. He has been waiting." },
+      { src: "https://i.ibb.co/CFN84JX/okyouwin.webp", title: "Ok, You Win", caption: "He conceded. Briefly. On his own terms. With full dignity intact." },
+      { src: "https://i.ibb.co/HpxfkCrY/okfine.webp", title: "Ok Fine", caption: "Reluctant agreement. He'll do it. But he wants it known he had reservations." },
+      { src: "https://i.ibb.co/NdZQSPdr/okayletsgo.webp", title: "Okay, Let's Go", caption: "Ready. Fully committed. Whatever this is, he's already in." },
+      { src: "https://i.ibb.co/sv5nN8nY/ohwhatisthismine.webp", title: "Oh, Is This Mine?", caption: "He's asking. He already knows the answer. The answer is yes. It's always yes." },
+      { src: "https://i.ibb.co/q3Tk5HWP/ohwhatisthis.webp", title: "Oh, What's This?", caption: "A discovery. Could be anything. He approaches with the same openness every time." },
+      { src: "https://i.ibb.co/670vRLTm/ohwhat.webp", title: "Oh — What?", caption: "Something caught his attention. Full stop. Full focus. The world can wait." },
+      { src: "https://i.ibb.co/zV0b262F/ohwater.webp", title: "Oh, Water", caption: "An old enemy. A worthy adversary. He regards it with appropriate suspicion." },
+      { src: "https://i.ibb.co/LdgdfZDM/ohformewhyyoushoulnthave.webp", title: "Oh, for Me? You Shouldn't Have.", caption: "He says this every time. He means none of it. He expects everything." },
+      { src: "https://i.ibb.co/5gPCWkDf/nownamedgivenanappropriatemohawk.webp", title: "Properly Named, Properly Styled", caption: "The mohawk that confirmed the name. Wolfgang was always the right call." },
+      { src: "https://i.ibb.co/B5NW72rq/noleashfromdayone.webp", title: "No Leash from Day One", caption: "It wasn't a rule. It was just how it was. Trust, established immediately." },
+      { src: "https://i.ibb.co/TDHdkN3w/mypal.webp", title: "My Pal", caption: "That's him. That's the one. My pal. End of story." },
+      { src: "https://i.ibb.co/Ngj3qTkw/mylittleguy.webp", title: "My Little Guy", caption: "Little in stature. Enormous in presence. My little guy, no question." },
+      { src: "https://i.ibb.co/qFVszwVN/mylittledonut.webp", title: "My Little Donut", caption: "Curled perfectly into himself. A complete circle. A little donut." },
+      { src: "https://i.ibb.co/bjK8FYHX/mydreamwastoownacafejustforwolfietohangoutin.webp", title: "The Dream Café", caption: "The dream: a café. The real reason: so Wolfgang would have somewhere to be." },
+      { src: "https://i.ibb.co/Y7cJj7Vc/muralist.webp", title: "The Muralist", caption: "Posed in front of something large and painted. He looked more impressive than the art." },
+      { src: "https://i.ibb.co/d0bT8TBD/metallicafanprobably.webp", title: "Metallica Fan, Probably", caption: "The expression, the energy, the general vibe — he's definitely a Metallica fan." },
+      { src: "https://i.ibb.co/zh2ZrzgJ/lowestoflowsbutstabilityforwolfgang.webp", title: "The Lowest of Lows", caption: "Hard times. But Wolfgang was there. Consistent, stable, the one thing that held." },
+      { src: "https://i.ibb.co/M5jT7kWj/lovethisface.webp", title: "Love This Face", caption: "This face. Just this. Every single day. Love this face." },
+      { src: "https://i.ibb.co/nNKFYj1B/loveshadowheart.webp", title: "Love Shadow Heart", caption: "The light fell just right and made a heart. He didn't plan it. He never has to." },
+      { src: "https://i.ibb.co/JjVcwMw8/lovebruh.webp", title: "Love, Bruh", caption: "No other words for it. Love, bruh. Just love." },
+      { src: "https://i.ibb.co/bRy3QhNL/tabletoppoodle.webp", title: "Tabletop Poodle", caption: "He got up there himself. He had no intention of coming down. Table claimed." },
+      { src: "https://i.ibb.co/vCYxMRbG/lookiftheysayanythingiamheretokeepyouontask.webp", title: "Here to Keep You on Task", caption: "He's watching. If anyone says anything, he's right there. Eyes on the room." },
+      { src: "https://i.ibb.co/JwmvLQmx/likemyexgirlfriendhoodiereowner.webp", title: "Hoodie Re-Owner", caption: "It was someone else's once. It belongs to Wolfgang now. As do most hoodies." },
+      { src: "https://i.ibb.co/21Npmk7W/lifestylegoalsachieved.webp", title: "Lifestyle Goals: Achieved", caption: "This is the life. He got there. Benchmark met, standard set, bar raised." },
+      { src: "https://i.ibb.co/RGJjnMpL/laleedaa.webp", title: "Laleedaa", caption: "Unbothered. Just vibing. Not a care. Laleedaa." },
+      { src: "https://i.ibb.co/LXbb1yqN/jobwelldone.webp", title: "Job Well Done", caption: "He did the thing. Whatever it was, it was done well. He knows it." },
+      { src: "https://i.ibb.co/jZ66mwX7/itsthisexactlookthatgetsmeeverysingletime.webp", title: "It's This Exact Look", caption: "That look. He uses it deliberately and it works every single time. Every time." },
+      { src: "https://i.ibb.co/Mm07h9F/ilovehim.webp", title: "I Love Him", caption: "Just that. No context needed. I love him." },
+      { src: "https://i.ibb.co/d4SkHwfB/icecream45678.webp", title: "Ice Cream", caption: "He discovered ice cream. The world shifted slightly on its axis. All was right." },
+      { src: "https://i.ibb.co/whFvFR24/hydratedandhappy.webp", title: "Hydrated and Happy", caption: "Both things. At the same time. This is the whole goal." },
+      { src: "https://i.ibb.co/r2ynCVfQ/homeiswhereyourest.webp", title: "Home Is Where You Rest", caption: "He found his spot. Settled in. Made it home. That's the whole philosophy." },
+      { src: "https://i.ibb.co/Ldmrtb7t/hislittleblacklips.webp", title: "His Little Black Lips", caption: "A close study. The lips, the whiskers, the whole arrangement — just right." },
+      { src: "https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp", title: "His Favorite Café", caption: "He has a regular. He is a regular. They know him here. He prefers it that way." },
+      { src: "https://i.ibb.co/fVrBVSpn/hideyourdogatworkday.webp", title: "Hide Your Dog at Work Day", caption: "He was not hidden. He was proudly displayed. The colleagues were delighted." },
+      { src: "https://i.ibb.co/0RLXVg2g/hidaddy.webp", title: "Hi Daddy", caption: "He said hi. He always says hi. The greeting is genuine every single time." },
+      { src: "https://i.ibb.co/JjGbm5rh/heydaddy.webp", title: "Hey Daddy", caption: "And then he said it again, differently. Both versions are equally good." },
+      { src: "https://i.ibb.co/zWcGkYxT/haircut87654.webp", title: "Post-Haircut, Vol. III", caption: "Another haircut. Another transformation. Still the same Wolfgang underneath." },
+      { src: "https://i.ibb.co/XZD5kPCs/haircut.webp", title: "Fresh Cut", caption: "Groomed, glowing, fully aware of how good he looks right now." },
+      { src: "https://i.ibb.co/8L68BJFv/guardian.webp", title: "The Guardian", caption: "On watch. Protective. There is nothing getting past him today." },
+      { src: "https://i.ibb.co/7NBXqNfS/foreman.webp", title: "The Foreman", caption: "Overseeing operations. Standards are his business. Compliance is expected." },
+      { src: "https://i.ibb.co/YJbXh7S/fluffy.webp", title: "Fluffy Era", caption: "Peak fluff. Maximum volume. He was at his most cloud-like and he knew it." },
+      { src: "https://i.ibb.co/XxZ9sYZc/fivehundredmileroadtripfromwestvirginia.webp", title: "500 Miles from West Virginia", caption: "A long road back. He slept through most of it, which was probably the right call." },
+      { src: "https://i.ibb.co/S45KWTfz/firstsnow.webp", title: "First Snow", caption: "He stepped outside. He looked at the snow. He had opinions. Many, many opinions." },
+      { src: "https://i.ibb.co/93zWzBDm/firesidefavorites2.webp", title: "Fireside Favorites, Vol. II", caption: "Back by the fire. Right where he belongs. The warmth suits him perfectly." },
+      { src: "https://i.ibb.co/mVKrQG5s/firesidefavorites.webp", title: "Fireside Favorites", caption: "Warm light, warm dog, warm everything. The best kind of evening." },
+      { src: "https://i.ibb.co/nNJTsKj4/everyherohasagoodoriginstory.webp", title: "Every Hero Has an Origin Story", caption: "This is his. Before all of it — this moment, this face, this beginning." },
+      { src: "https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp", title: "Elephant, by Wolfgang", caption: "His first collaboration with an elephant. A natural creative partnership." },
+      { src: "https://i.ibb.co/NDk7kcW/drivethruluxurysuite.webp", title: "Drive-Thru Luxury Suite", caption: "The car became a five-star suite. Wolfgang saw to the amenities personally." },
+      { src: "https://i.ibb.co/3YQQ7hBK/drivethru.webp", title: "Drive-Thru", caption: "He goes through every drive-thru. He is known at all of them. They expect him." },
+      { src: "https://i.ibb.co/v9qfSnz/donthidebehindpillowbecomepillow.webp", title: "Don't Hide Behind the Pillow — Become It", caption: "Advanced technique. He didn't avoid the pillow. He became one with the pillow." },
+      { src: "https://i.ibb.co/SDxTXcYS/dinnerforwolfgang.webp", title: "Dinner for Wolfgang", caption: "The table is set. The guest of honor is seated. Service may now begin." },
+      { src: "https://i.ibb.co/XxvXrgTn/deersteakhedidnoteatit.webp", title: "Deer Steak (He Did Not Eat It)", caption: "Offered deer steak. Refused. Politely. With the confidence of a food critic." },
+      { src: "https://i.ibb.co/XfJYXCw4/dailydrip.webp", title: "Daily Drip", caption: "The morning ritual. Water, hydration, a long slow drink. He starts every day right." },
+      { src: "https://i.ibb.co/yFLwD4nv/dadhastogotoameetingsimpromptucampingadventure.webp", title: "Impromptu Camping Adventure", caption: "Dad had a meeting. Wolfgang had a tent. The meeting could wait. Camping happened." },
+      { src: "https://i.ibb.co/fV6xyHmQ/couchsurfing.webp", title: "Couch Surfing", caption: "He moves from couch to couch with the ease of someone who owns all of them." },
+      { src: "https://i.ibb.co/Kcfy2q4h/classic6543.webp", title: "A Classic, Vol. IV", caption: "Another entry in the classics archive. Every one of them is worth keeping." },
+      { src: "https://i.ibb.co/4RLZnZR1/catshouse.webp", title: "The Cat's House", caption: "He visited the cat's house. The cat had thoughts. Wolfgang remained unbothered." },
+      { src: "https://i.ibb.co/Hy8XwrB/calminganywhere.webp", title: "Calm Anywhere", caption: "Plane, car, city, wilderness — it doesn't matter. He finds his calm everywhere." },
+      { src: "https://i.ibb.co/4RfTWWkp/burgerkingindeed.webp", title: "Burger King, Indeed", caption: "He went to Burger King. He was, in fact, treated like a king. As expected." },
+      { src: "https://i.ibb.co/twP8m5wP/buildingburgerking.webp", title: "Building Burger King", caption: "Outside the Burger King. Waiting. The anticipation was palpable and justified." },
+      { src: "https://i.ibb.co/3yYzQLjP/braveboy.webp", title: "Brave Boy", caption: "He was scared. He did it anyway. That's bravery. That's Wolfgang." },
+      { src: "https://i.ibb.co/F4wPJkk8/beefdinneringravy.webp", title: "Beef Dinner in Gravy", caption: "A proper meal. He received it with the gravitas the dish deserved." },
+      { src: "https://i.ibb.co/n8Q5B3NT/atleastthegravyisgood.webp", title: "At Least the Gravy Is Good", caption: "Not a perfect situation. But the gravy is genuinely excellent. Small wins." },
+      { src: "https://i.ibb.co/5XLHJ6h3/assorgrasslass.webp", title: "Grass Assessment", caption: "Serious business, the grass. He evaluates it thoroughly before committing." },
+      { src: "https://i.ibb.co/mrphxssF/angel987654.webp", title: "An Angel", caption: "The light, the pose, the whole thing. An absolute angel. No other word for it." },
+      { src: "https://i.ibb.co/MxGzxSVk/wolfgang00.webp", title: "Wolfgang", caption: "Just Wolfgang. In full. All of him, right here." },
+      { src: "https://i.ibb.co/Swk4v5Tv/wolfgang000.webp", title: "Wolfgang, Again", caption: "Because once was not enough. It never is." },
+      { src: "https://i.ibb.co/KJ9pcSh/sowolfiehatedtherain.webp", title: "Wolfie Hated the Rain", caption: "He made his feelings clear. Formally. In writing, basically. His stance: no." },
+      { src: "https://i.ibb.co/nsKMYrDs/sowhatareyouupto.webp", title: "So What Are You Up To?", caption: "He wants to know. He's asking casually. It's not casual. He's very invested." },
+      { src: "https://i.ibb.co/9kNPNs8m/refresher.webp", title: "Refresher", caption: "A cold drink. A moment of pause. A reset. He takes his refreshment seriously." },
+      { src: "https://i.ibb.co/wZ4jL08Y/precious.webp", title: "Precious", caption: "That's the word. That's the only word. Precious." },
+      { src: "https://i.ibb.co/93bMTmpY/newtothis.webp", title: "New to This", caption: "Early days. Everything was new. He met it all with the same open curiosity." },
+      { src: "https://i.ibb.co/xS9ChmKq/mowhawkwide.webp", title: "Mohawk, Wide Shot", caption: "The full picture. The mohawk in its natural habitat, from a respectful distance." },
+      { src: "https://i.ibb.co/xqv72y7c/mohawk.webp", title: "The Mohawk", caption: "The defining haircut. The look that earned the name. Iconic doesn't cover it." },
+      { src: "https://i.ibb.co/LdR4cY9N/loveinastoriabw.webp", title: "Love in Astoria (B&W)", caption: "Astoria, black and white, and Wolfgang. Everything that matters in one frame." },
+      { src: "https://i.ibb.co/KxhDw7nS/loveinastoria.webp", title: "Love in Astoria", caption: "The neighborhood, the light, the dog. A love letter to a place and a moment." },
+      { src: "https://i.ibb.co/SXWPr4vf/likereallyreallyhatedtherain.webp", title: "Really, Really Hated the Rain", caption: "His feelings escalated. The rain did not stop. He doubled down on his position." },
+      { src: "https://i.ibb.co/mCy62tkg/likereallyhatedtherain.webp", title: "Really Hated the Rain", caption: "He made this very clear. Vocally. Repeatedly. His stance on rain: firm opposition." },
+      { src: "https://i.ibb.co/BKymJdYK/itshisworld.webp", title: "It's His World", caption: "We are all simply living in it. He accepts our presence. He's gracious like that." },
+      { src: "https://i.ibb.co/qYS6Vj2h/improviseasolutionreallydad.webp", title: "Really, Dad? This Is the Solution?", caption: "He saw the improvised fix. He had questions. His skepticism was entirely valid." },
+      { src: "https://i.ibb.co/bRs7ZLrj/improviseasolution.webp", title: "Improvise a Solution", caption: "Something broke. Something was fixed with whatever was available. Wolfgang approved." },
+      { src: "https://i.ibb.co/fVYPWX91/hoodie2.webp", title: "Hoodie, Vol. II", caption: "Another hoodie, claimed. The collection grows. He has exquisite taste in fleece." },
+      { src: "https://i.ibb.co/dwNhjGPZ/hoodie1.webp", title: "Hoodie, Vol. I", caption: "The first hoodie. The one that started it all. A foundational piece." },
+      { src: "https://i.ibb.co/M5Pcy9f9/homemademeals.webp", title: "Homemade Meals", caption: "Cooked with care. Eaten with enthusiasm. He appreciated the effort." },
+      { src: "https://i.ibb.co/N6dbht9r/hehateditsomuch.webp", title: "He Hated It So Much", caption: "Whatever it was, the feeling was strong and it was communicated clearly." },
+      { src: "https://i.ibb.co/CknqHpK/happierinnewyork.webp", title: "Happier in New York", caption: "Something about the city agreed with him. He walked taller. He was home." },
+      { src: "https://i.ibb.co/TBLbZpNb/fiveminuteslater.webp", title: "Five Minutes Later", caption: "Whatever happened before this — five minutes later, this is where he was." },
+      { src: "https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp", title: "The First Few Weeks", caption: "Everything was new. For both of us. We were figuring each other out together." },
+      { src: "https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp", title: "Curb Your Dog (B&W)", caption: "The sign said curb your dog. He saw the sign. He was unbothered by the sign." },
+      { src: "https://i.ibb.co/HTqtChHv/curbyourdog.webp", title: "Curb Your Dog", caption: "A city rule. A Wolfgang moment. The irony was not lost on either of us." },
+      { src: "https://i.ibb.co/kV6CzpWS/comfort2.webp", title: "Comfort, Vol. II", caption: "He returned to comfort. Because comfort is his natural state and rightful place." },
+      { src: "https://i.ibb.co/qfBwLrD/comfort1.webp", title: "Comfort, Vol. I", caption: "The original comfort. The posture, the softness, the total surrender to ease." },
+      { src: "https://i.ibb.co/qFjdZ2Py/classicwolfgang777.webp", title: "A Classic, Vol. VII", caption: "The classics archive continues. Each one essential. None of them the last." },
+      { src: "https://i.ibb.co/8n5gkh5v/classicwolfgang65.webp", title: "A Classic, Vol. VI", caption: "Another one for the archive. Perfect, just like the others. Just like him." },
+      { src: "https://i.ibb.co/wF05mLW2/joyful.webp", title: "Joyful", caption: "That's it. That's the word. Joyful." },
+      { src: "https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp", title: "At This Moment, I Decided He Was Mine", caption: "This exact photo. This exact look. That was the moment. It was already over." },
   ];
   const STORAGE_KEY = "intoview_archive_cards_v6";
   const CONFIG = {
@@ -1582,41 +1567,28 @@
       ctx.arcTo(x, y, x + w, y, rr);
       ctx.closePath();
   }
-  function drawGlassBezel(ctx, s, opts = {}) {
-      // Glass-style border: luminous inner rim + subtle outer glow
-      const r = opts.radius ?? 6;
+  function drawChromeBezel(ctx, s, opts = {}) {
+      const w = Math.max(4, opts.width ?? 1);
+      const r = Math.min(12, opts.radius ?? 4);
       ctx.save();
       ctx.translate(0.5, 0.5);
-
-      // Outer subtle glow ring
-      ctx.strokeStyle = "rgba(255,255,255,0.06)";
-      ctx.lineWidth = 3;
+      const grad = ctx.createLinearGradient(0, 0, 0, s);
+      grad.addColorStop(0.0, "rgba(255,255,255,0.95)");
+      grad.addColorStop(0.15, "rgba(210,210,210,0.78)");
+      grad.addColorStop(0.5, "rgba(242,242,242,0.95)");
+      grad.addColorStop(0.85, "rgba(210,210,210,0.78)");
+      grad.addColorStop(1.0, "rgba(255,255,255,0.95)");
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = w;
       ctx.lineJoin = "round";
-      roundRect(ctx, 1, 1, s - 2, s - 2, r + 2);
+      ctx.lineCap = "round";
+      roundRect(ctx, w / 2, w / 2, s - w, s - w, r);
       ctx.stroke();
-
-      // Main glass edge — angled light sweep
-      const edgeGrad = ctx.createLinearGradient(0, 0, s, s);
-      edgeGrad.addColorStop(0.0,  "rgba(255,255,255,0.45)");
-      edgeGrad.addColorStop(0.18, "rgba(255,255,255,0.18)");
-      edgeGrad.addColorStop(0.5,  "rgba(255,255,255,0.06)");
-      edgeGrad.addColorStop(0.82, "rgba(255,255,255,0.14)");
-      edgeGrad.addColorStop(1.0,  "rgba(255,255,255,0.30)");
-      ctx.strokeStyle = edgeGrad;
-      ctx.lineWidth = 1.5;
-      roundRect(ctx, 0.75, 0.75, s - 1.5, s - 1.5, r);
-      ctx.stroke();
-
-      // Inner hair-line for depth
-      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.strokeStyle = "rgba(255,255,255,0.95)";
       ctx.lineWidth = 1;
-      roundRect(ctx, 2.5, 2.5, s - 5, s - 5, Math.max(2, r - 3));
+      roundRect(ctx, w + 0.5, w + 0.5, s - 2 * w - 1, s - 2 * w - 1, Math.max(2, r - 2));
       ctx.stroke();
-
       ctx.restore();
-  }
-  function drawChromeBezel(ctx, s, opts = {}) {
-      drawGlassBezel(ctx, s, opts);
   }
   function makeCardCanvas({ img, title = "[ title ]", caption = "[ caption ]", gps = "", ts = nowTS() }) {
       const s = TEX_SIZE,
@@ -1624,17 +1596,12 @@
       c.width = s;
       c.height = s;
       const ctx = c.getContext("2d");
-      // Base: dark but not pure black — glass should be translucent
-      ctx.fillStyle = "#080808";
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, s, s);
-      // Top bar — glass tint
-      const topGrad = ctx.createLinearGradient(0, 0, 0, BAR_H);
-      topGrad.addColorStop(0, "rgba(255,255,255,0.10)");
-      topGrad.addColorStop(1, "rgba(255,255,255,0.03)");
-      ctx.fillStyle = topGrad;
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, s, BAR_H);
       ctx.font = `600 ${TITLE_SIZE}px ${UI}`;
-      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fillStyle = "#e6e6e6";
       ctx.textBaseline = "top";
       ctx.textAlign = "left";
       ctx.fillText(title, PAD, Math.floor((BAR_H - TITLE_SIZE) / 2));
@@ -1642,50 +1609,36 @@
           ctx.font = `500 12px ${MONO}`;
           ctx.textBaseline = "middle";
           ctx.textAlign = "right";
-          ctx.fillStyle = "rgba(255,255,255,0.55)";
+          ctx.fillStyle = "#cfcfcf";
           ctx.fillText(gps, s - PAD, BAR_H / 2);
           ctx.textAlign = "left";
       }
-      // Hairline separator — glass shimmer
-      ctx.fillStyle = "rgba(255,255,255,0.20)";
-      ctx.fillRect(0, BAR_H, s, HAIR);
+      drawHair(ctx, 0, BAR_H, s);
       const imgTop = BAR_H + HAIR,
           imgH = s - imgTop - (BAR_H + HAIR);
       if (img) {
           coverImage(ctx, img, 0, imgTop, s, imgH);
-          // Glass sheen overlay on image
-          const sheenGrad = ctx.createLinearGradient(0, imgTop, s * 0.6, imgTop + imgH * 0.4);
-          sheenGrad.addColorStop(0, "rgba(255,255,255,0.04)");
-          sheenGrad.addColorStop(1, "rgba(255,255,255,0.0)");
-          ctx.fillStyle = sheenGrad;
-          ctx.fillRect(0, imgTop, s, imgH);
       } else {
           const BORDER_W = 4;
-          ctx.fillStyle = "rgba(255,255,255,0.02)";
+          ctx.fillStyle = "#000";
           ctx.fillRect(0, imgTop, s, imgH);
-          ctx.strokeStyle = "rgba(255,255,255,0.15)";
+          ctx.strokeStyle = "#fff";
           ctx.lineWidth = BORDER_W;
           ctx.strokeRect(BORDER_W / 2, imgTop + BORDER_W / 2, s - BORDER_W, imgH - BORDER_W);
       }
-      // Bottom hairline
-      ctx.fillStyle = "rgba(255,255,255,0.15)";
-      ctx.fillRect(0, s - BAR_H - HAIR, s, HAIR);
-      // Bottom bar — glass tint
-      const botGrad = ctx.createLinearGradient(0, s - BAR_H, 0, s);
-      botGrad.addColorStop(0, "rgba(255,255,255,0.03)");
-      botGrad.addColorStop(1, "rgba(255,255,255,0.10)");
-      ctx.fillStyle = botGrad;
+      drawHair(ctx, 0, s - BAR_H - HAIR, s);
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, s - BAR_H, s, BAR_H);
       ctx.font = `500 ${CAP_SIZE}px ${UI}`;
-      ctx.fillStyle = "rgba(255,255,255,0.72)";
+      ctx.fillStyle = "#e6e6e6";
       ctx.textBaseline = "middle";
       ctx.textAlign = "left";
       ctx.fillText(caption, PAD, s - BAR_H / 2);
       ctx.font = `500 12px ${MONO}`;
-      ctx.fillStyle = "rgba(255,255,255,0.38)";
+      ctx.fillStyle = "#cfcfcf";
       ctx.textAlign = "right";
       ctx.fillText(ts, s - PAD, s - BAR_H / 2);
-      drawChromeBezel(ctx, s, { width: 1, radius: 5 });
+      drawChromeBezel(ctx, s, { width: 1, radius: 0 });
       return c;
   }
   function makeCardTextureFromCanvas(cnv) {
@@ -2527,7 +2480,7 @@
           Canvas,
           {
               gl: { antialias: !0, powerPreference: "high-performance" },
-              camera: { fov: 35, position: [0, 0, 2.5] },
+              camera: { fov: 35, position: [0, 0, CONFIG.zoomOut] },
               dpr: [1, 2],
               onCreated: ({ gl }) => {
                   gl.setClearColor(0x000000, 1);
@@ -3760,8 +3713,10 @@
   };
 
   const handleMobileRowTap = (e, idx, isEditable) => {
-    // Row tap does NOT open edit on mobile anymore — scroll-with-image behavior
-    return;
+    if (!isTouch || !isEditable) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setMobileEditIdx(idx === mobileEditIdx ? -1 : idx);
   };
 
   const handleMobileCommit = (idx, patch) => {
@@ -3804,6 +3759,10 @@
                   window.showDeleteConfirm(idx, artist, album, window.deleteFromArchive);
                 }
               },
+              // Touch: tap row to expand edit panel
+              onClick: isEditable && isTouch
+                ? (e) => handleMobileRowTap(e, idx, isEditable)
+                : undefined,
             },
             // Normal display cells (hidden via CSS when mobile-editing)
             React.createElement(EditableCell, {
@@ -3822,23 +3781,7 @@
             }),
             React.createElement("span", { className: "project-data label" }, " "),
             React.createElement("span", { className: "project-data year" }, new Date().getFullYear()),
-            // Explicit mobile edit button — only on touch + editable rows
-            isEditable && isTouch && !isMobileEditing && React.createElement(
-              "button",
-              {
-                className: "mobile-edit-btn",
-                "aria-label": "Edit entry",
-                onClick: (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setMobileEditIdx(idx);
-                },
-              },
-              React.createElement("svg", { viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" },
-                React.createElement("path", { d: "M11.5 2.5l2 2-7 7-2.5.5.5-2.5 7-7z" })
-              )
-            ),
-            // Mobile edit panel — only rendered when touch + editing
+            // Mobile edit panel — only rendered (but CSS-hidden) when touch
             isEditable && isTouch && React.createElement(MobileEditPanel, {
               key: `edit_${it.id || idx}`,
               item: it,
@@ -3983,7 +3926,7 @@
               delete window.deleteFromArchive;
           };
       }, [deleteFromArchive, sortedArchive]);
-      const [zoom, setZoom] = useState(2.5); // start at 25% zoom
+      const [zoom, setZoom] = useState(CONFIG.zoomMin + 0.25 * (CONFIG.zoomMax - CONFIG.zoomMin));
       const handleTileClick = (idx, item) => {
           if (item?.placeholder) {
               setOverlayOpen(!0);

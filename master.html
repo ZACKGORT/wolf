@@ -1,34 +1,78 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1.0,minimum-scale=1.0" name="viewport">
-<title>wolfie.live</title>
+<title>wolfie.life</title>
+
+<link rel="modulepreload" href="https://esm.sh/react@18.3.1">
+<link rel="modulepreload" href="https://esm.sh/react-dom@18.3.1/client">
+<link rel="modulepreload" href="https://esm.sh/three@0.160.1">
+<link rel="modulepreload" href="https://esm.sh/@react-three/fiber@8.16.0?deps=react@18.3.1,react-dom@18.3.1,three@0.160.1">
+<link rel="modulepreload" href="https://esm.sh/gsap@3.12.5">
+
 <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin>
 <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+  /* ===================================
+     CSS VARIABLES — wolfie.love palette
+     =================================== */
   :root {
+      /* ── Palette ── */
       --bg-color: #000000;
-      --card-color: transparent;
       --ink: #ffffff;
-      --ink-2: #9f9f9f;
-      --ink-3: #6c6c6c;
-      --accent: #7ee787;
+      --ink-2: #b8b8b8;
+      --ink-3: #808080;
+      --accent: #daa520;
       --danger: #ff6363;
+
+      /* ── Semantic surfaces ── */
+      --surface: rgba(0, 0, 0, 0.60);
+      --surface-raised: rgba(10, 10, 10, 0.95);
+      --border: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --border-color: rgba(255, 255, 255, 0.10); /* alias */
+      --hover-tint: rgba(218, 165, 32, 0.08);
+      --hover-tint-strong: rgba(218, 165, 32, 0.15);
+
+      --glass-bg: var(--surface);
+      --glass-bg-hover: var(--hover-tint);
+      --glass-border: var(--border);
+
+      /* ── Typography ── */
+      --ui-font: 'Space Mono', monospace;
+      --body-font: 'Crimson Text', Georgia, serif;
+
+      /* ── Effects ── */
       --curve-k: 1;
-      --vig-opacity: 1;
-      --vig-inner: 25%;
-      --vig-mid: 80%;
+      --vig-opacity: 0.85;
+      --vig-inner: 30%;
+      --vig-mid: 75%;
       --vig-outer: 100%;
-      --edge-blur: 8px;
-      --edge-mask-i: 60%;
-      --edge-mask-o: 75%;
+      --edge-blur: 6px;
+      --edge-mask-i: 65%;
+      --edge-mask-o: 80%;
+      --grain-opacity: 0.08;
+
+      /* ── Selection ── */
+      --selection-bg: rgba(218, 165, 32, 0.25);
+      --selection-color: #ffffff;
+
+      /* ── Cursor ── */
       --cursor-size: 20px;
+      --cursor-bg: transparent;
+      --cursor-border: rgba(255, 255, 255, 0.50);
+      --cursor-blend: difference;
+
+      /* ── Layout ── */
       --fab-size: 120px;
       --fab-bottom: calc(env(safe-area-inset-bottom) + clamp(16px, 3vh, 32px));
       --corner-pad: clamp(14px, 2.4vw, 24px);
       --corner-top: calc(env(safe-area-inset-top) + clamp(12px, 2vh, 18px));
+
+      /* ── z-index stack ── */
       --z-content: 0;
       --z-background: 1;
       --z-grain: 149;
@@ -37,49 +81,33 @@
       --z-ui: 220;
       --z-overlay: 250;
       --z-cursor: 230;
+
+      /* ── Tokens ── */
       --border-width: 1px;
-      --border-color: rgba(255, 255, 255, 0.12);
-      --border-radius-sm: 4px;
-      --border-radius-md: 4px;
-      --border-radius-lg: 4px;
+      --border-radius-sm: 3px;
+      --border-radius-md: 6px;
+      --border-radius-lg: 8px;
+
+      /* ── Morphing disclosure ── */
       --duration: 0.26s;
       --ease: linear(0 0%, 0.2688 9.91%, 0.3859 15%, 0.9929 80.76%, 0.9986 88.89%, 1 100%);
-      --bounce: linear(0 0%, 0.5571 7.53%, 0.8252 11.98%, 0.9337 14.38%, 1.0166 16.8%, 0.9861 59.8%, 1 81.27% 100%);
       --blur: 4;
       --translate-y: 1;
       --opacity: 0.4;
       --translate-margin: 1.5;
       --dim: 0.4;
-      --dark-alpha-top: 0.62;
-      --dark-alpha-mid: 0.25;
-      --dark-span: 22%;
-      --glass-bg: rgba(255, 255, 255, 0.04);
-      --glass-bg-hover: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
   }
 
-  *,
-  *::before,
-  *::after {
-      box-sizing: border-box;
-  }
-
-  html {
-      color-scheme: dark;
-      -webkit-text-size-adjust: 100%;
-  }
-
-  body,
-  html,
-  #root {
-      height: 100%;
-      margin: 0;
-  }
-
+  /* ===================================
+     RESET & BASE
+     =================================== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+  body, html, #root { height: 100%; margin: 0; }
   body {
       background: var(--bg-color);
       color: var(--ink);
-      font: 14px/1.4 Inter, ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font: 18px/1.6 var(--body-font);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -89,84 +117,63 @@
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
+      cursor: none;
+      transition: background-color 0.35s ease, color 0.35s ease;
   }
-
+  body::-webkit-scrollbar { display: none; }
+  body { -ms-overflow-style: none; scrollbar-width: none; }
+  ::selection { background: var(--selection-bg); color: var(--selection-color); }
 
   @media (min-height: 900px) {
-      .dark-layer {
-          background-size: 100% 105%;
-          transform: translateY(-2vh);
-      }
+      .dark-layer { background-size: 100% 105%; transform: translateY(-2vh); }
   }
 
+  /* ===================================
+     VISUAL EFFECTS
+     =================================== */
   .edge-blur {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: var(--z-blur);
-      backdrop-filter: blur(var(--edge-blur));
-      -webkit-backdrop-filter: blur(var(--edge-blur));
-      mask: radial-gradient( 100% 64% at 50% 50%, transparent var(--edge-mask-i), rgb(255 255 255 / 0.98) var(--edge-mask-o));
-      -webkit-mask: radial-gradient( 100% 64% at 50% 50%, transparent var(--edge-mask-i), rgb(255 255 255 / 0.98) var(--edge-mask-o));
+      position: fixed; inset: 0; pointer-events: none; z-index: var(--z-blur);
+      backdrop-filter: blur(var(--edge-blur)); -webkit-backdrop-filter: blur(var(--edge-blur));
+      mask: radial-gradient(100% 64% at 50% 50%, transparent var(--edge-mask-i), rgb(255 255 255 / 0.98) var(--edge-mask-o));
+      -webkit-mask: radial-gradient(100% 64% at 50% 50%, transparent var(--edge-mask-i), rgb(255 255 255 / 0.98) var(--edge-mask-o));
+      will-change: transform; transform: translateZ(0);
   }
-
   .vignette {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: var(--z-vig);
-      background: radial-gradient( 120% 90% at 50% 50%, #fff0 var(--vig-inner), rgb(0 0 0 / 0.62) var(--vig-mid), rgb(0 0 0 / 0.98) var(--vig-outer));
+      position: fixed; inset: 0; pointer-events: none; z-index: var(--z-vig);
+      background: radial-gradient(120% 90% at 50% 50%, #fff0 var(--vig-inner), rgb(0 0 0 / 0.55) var(--vig-mid), rgb(0 0 0 / 0.9) var(--vig-outer));
       opacity: calc(var(--vig-opacity) * var(--curve-k));
+      will-change: opacity; transform: translateZ(0);
+      transition: opacity 0.35s ease;
   }
-
   body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: var(--z-grain);
-      opacity: 0.06;
+      content: ""; position: fixed; inset: 0; pointer-events: none;
+      z-index: var(--z-grain); opacity: var(--grain-opacity);
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
-      background-size: 120px 120px;
+      background-size: 120px 120px; will-change: transform; transform: translateZ(0);
   }
 
   @media (prefers-reduced-motion: reduce) {
-      .edge-blur {
-          backdrop-filter: none;
-          -webkit-backdrop-filter: none;
-      }
+      .edge-blur { backdrop-filter: none; -webkit-backdrop-filter: none; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .curved { transform: none; }
   }
 
-  .canvas-wrap {
-      position: absolute;
-      inset: 0;
-      z-index: var(--z-content);
-  }
-
+  /* ===================================
+     3D CANVAS
+     =================================== */
+  .canvas-wrap { position: absolute; inset: 0; z-index: var(--z-content); }
   .canvas-wrap canvas {
-      touch-action: none;
-      cursor: grab;
-      background: #000;
-      width: 100%;
-      height: 100%;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      touch-action: none; cursor: grab; background: #000; width: 100%; height: 100%;
+      -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   }
-
-  .canvas-wrap canvas.dragging {
-      cursor: grabbing;
-  }
+  .canvas-wrap canvas.dragging { cursor: grabbing; }
 
   .fallback-grid {
-      position: absolute;
-      inset: 0;
-      z-index: var(--z-content);
-      pointer-events: none;
+      position: absolute; inset: 0; z-index: var(--z-content); pointer-events: none;
       opacity: 0.06;
-      background-image: repeating-linear-gradient(to right, #fff 0 1px, transparent 1px 48px), repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 48px);
+      background-image: repeating-linear-gradient(to right, #fff 0 1px, transparent 1px 48px),
+                        repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 48px);
   }
 
   .curved {
@@ -175,1225 +182,618 @@
       will-change: transform;
   }
 
+  /* ===================================
+     HEADER
+     =================================== */
   .header {
-      position: fixed;
-      inset: 0 0 auto 0;
+      position: fixed; inset: 0 0 auto 0;
       z-index: calc(var(--z-ui) + 1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: var(--corner-top) var(--corner-pad) 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: var(--corner-top) var(--corner-pad) 12px;
       pointer-events: none;
   }
 
   .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: inherit;
-      user-select: none;
-      pointer-events: auto;
-      padding: 6px 8px;
-      border-radius: var(--border-radius-md);
-      transition: background 0.2s ease;
+      display: flex; align-items: center; gap: 7px;
+      text-decoration: none; user-select: none; pointer-events: auto;
+      padding: 5px 9px; border-radius: var(--border-radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      font-family: var(--ui-font); font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink-3);
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
-
-  .brand:hover {
-      background: var(--glass-bg);
-  }
-
+  .brand:hover { background: var(--hover-tint); color: var(--ink); border-color: var(--accent); }
+  .brand:active { transform: scale(0.95); }
   .brand img {
-      display: block;
-      height: 36px;
-      width: auto;
+      display: block; height: 24px; width: auto;
+      filter: grayscale(1) brightness(2); transition: filter 0.2s ease;
   }
+  .brand:hover img { filter: none; }
 
-  .controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      pointer-events: auto;
-  }
+  .controls { display: flex; gap: 6px; align-items: center; pointer-events: auto; }
 
+  /* ===================================
+     ICON BUTTON
+     =================================== */
   .icon-btn {
-      appearance: none;
-      cursor: pointer;
-      border: var(--border-width) solid var(--border-color);
-      background: var(--glass-bg);
-      color: var(--ink);
-      padding: 8px;
-      border-radius: var(--border-radius-md);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 120ms ease, background 120ms ease, color 120ms ease;
+      appearance: none; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--ink-3); padding: 8px; border-radius: var(--border-radius-md);
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
+  .icon-btn:hover { background: var(--hover-tint); border-color: var(--accent); color: var(--accent); transform: scale(1.08); }
+  .icon-btn:active { transform: scale(0.94); }
+  .icon-btn svg { display: block; width: 14px; height: 14px; }
 
-  .icon-btn:hover {
-      transform: translateY(-1px);
-      background: var(--glass-bg-hover);
-  }
-
-  .icon-btn:active {
-      transform: translateY(0);
-  }
-
-  .icon-btn svg {
-      display: block;
-      width: 18px;
-      height: 18px;
-  }
-
+  /* ===================================
+     BUTTON
+     =================================== */
   .btn {
-      appearance: none;
-      cursor: pointer;
-      border: var(--border-width) solid var(--border-color);
-      background: var(--glass-bg);
-      color: var(--ink);
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 14px;
-      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+      appearance: none; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--ink-3); padding: 8px 14px; border-radius: var(--border-radius-md);
+      font-family: var(--ui-font); font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; font-weight: 400;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
-
-  .btn:hover {
-      background: var(--glass-bg-hover);
-  }
-
-  .btn:active {
-      transform: translateY(1px);
-  }
-
-  .btn.ghost {
-      background: #fff0;
-  }
-
+  .btn:hover { background: var(--hover-tint); border-color: var(--accent); color: var(--accent); }
+  .btn:active { transform: scale(0.96); }
+  .btn.ghost { background: #fff0; }
   .btn.primary {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #0b0b0d;
+      border-color: var(--accent); background: var(--accent);
+      color: #0b0b0d; font-weight: 700;
   }
+  .btn.primary:hover { background: color-mix(in srgb, var(--accent) 90%, white); color: #000; }
+  .btn-delete { background: var(--danger); border-color: var(--danger); color: #ffffff; }
 
-  .btn.primary:hover {
-      background: color-mix(in oklch, var(--accent) 90%, white);
+  /* ===================================
+     SIDE RAILS — VIEW TOGGLE & ZOOM PRESETS
+     =================================== */
+  .view-toggle, .zoom-presets {
+      position: fixed; top: 50%; transform: translateY(-50%); z-index: var(--z-ui);
+      display: flex; flex-direction: column; gap: 4px;
+      background: var(--surface); border-radius: var(--border-radius-md);
+      padding: 6px; border: 1px solid var(--border);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      transition: background 0.35s ease, border-color 0.35s ease;
   }
+  .view-toggle { left: var(--corner-pad); }
+  .zoom-presets { right: var(--corner-pad); }
 
-  .view-toggle,
-  .zoom-presets {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: var(--z-ui);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: var(--glass-bg);
-      border-radius: var(--border-radius-md);
-      padding: 6px;
-      border: var(--border-width) solid var(--border-color);
-      backdrop-filter: blur(20px);
-  }
-
-  .view-toggle {
-      left: var(--corner-pad);
-  }
-
-  .zoom-presets {
-      right: var(--corner-pad);
-  }
-
-  .toggle-btn,
-  .zoom-presets-btn {
-      appearance: none;
-      border: 0;
-      background: #fff0;
-      color: var(--ink-2);
-      padding: 8px;
-      cursor: pointer;
+  .toggle-btn, .zoom-presets-btn {
+      appearance: none; border: 1px solid transparent; background: transparent;
+      color: var(--ink-3); padding: 8px; cursor: pointer;
       border-radius: var(--border-radius-sm);
-      transition: all 120ms ease;
-      font-weight: 600;
-      font-size: 14px;
+      font-family: var(--ui-font); font-weight: 400; font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .toggle-btn svg { width: 16px; height: 16px; display: block; }
+  .toggle-btn:hover, .zoom-presets-btn:hover { color: var(--accent); background: var(--hover-tint); }
+  .toggle-btn.active, .zoom-presets-btn.active {
+      color: var(--accent); background: var(--hover-tint-strong);
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
-  .toggle-btn svg {
-      width: 20px;
-      height: 20px;
-      display: block;
-  }
-
-  .toggle-btn:hover,
-  .zoom-presets-btn:hover {
-      color: var(--ink);
-      background: var(--glass-bg-hover);
-  }
-
-  .toggle-btn.active,
-  .zoom-presets-btn.active {
-      color: var(--accent);
-      background: color-mix(in oklch, var(--accent) 20%, transparent);
-  }
-
+  /* ===================================
+     OVERLAYS
+     =================================== */
   .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: var(--z-overlay);
-      display: none;
-      pointer-events: auto;
-      background: rgb(0 0 0 / 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0; z-index: var(--z-overlay);
+      display: none; pointer-events: auto;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      align-items: center; justify-content: center;
       padding: clamp(16px, 3vw, 32px);
   }
-
-  .overlay.open {
-      display: flex;
-  }
-
-  .delete-confirm-dialog {
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    padding: clamp(20px, 3vw, 32px);
-    max-width: min(90vw, 400px);
-    width: 100%;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  .delete-confirm-dialog h3 {
-    margin: 0 0 12px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-
-  .delete-confirm-dialog p {
-    margin: 0 0 24px 0;
-    color: var(--ink-2);
-    line-height: 1.5;
-  }
-
-  .delete-confirm-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-  }
-
-  .btn-cancel {
-    background: var(--glass-bg);
-    border: var(--border-width) solid var(--border-color);
-    color: var(--ink);
-  }
-
-  .btn-delete {
-    background: var(--danger);
-    border-color: var(--danger);
-    color: #ffffff;
-  }
-
-  .btn-delete:hover {
-    background: color-mix(in oklch, var(--danger) 90%, white);
-    border-color: color-mix(in oklch, var(--danger) 90%, white);
-  }
-
-  .overlay.curved {
-      transform: none !important;
-      transform-style: flat !important;
-      perspective: none !important;
-  }
+  .overlay.open { display: flex; }
+  .overlay.curved { transform: none !important; transform-style: flat !important; perspective: none !important; }
 
   .overlay-wrapper {
-      position: fixed;
-      inset: 0;
-      z-index: var(--z-overlay);
-      display: none;
-      flex-direction: column;
-      background: rgb(0 0 0 / 0.62);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      position: fixed; inset: 0; z-index: var(--z-overlay);
+      display: none; flex-direction: column;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   }
+  .overlay-wrapper.open { display: flex; }
 
-  .overlay-wrapper.open {
-      display: flex;
+  /* ===================================
+     DELETE CONFIRM DIALOG
+     =================================== */
+  .delete-confirm-dialog {
+      background: var(--surface-raised); border: 1px solid var(--border-strong);
+      border-radius: var(--border-radius-lg); padding: clamp(20px, 3vw, 32px);
+      max-width: min(90vw, 400px); width: 100%;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
   }
+  .delete-confirm-dialog h3 {
+      margin: 0 0 12px; font-family: var(--ui-font); font-size: 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); font-weight: 400;
+  }
+  .delete-confirm-dialog p {
+      margin: 0 0 24px; color: var(--ink-2);
+      font-family: var(--body-font); font-size: 18px; line-height: 1.55;
+  }
+  .delete-confirm-buttons { display: flex; gap: 10px; justify-content: flex-end; }
 
+  /* ===================================
+     TITLE BARS
+     =================================== */
   .title-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
       padding: clamp(16px, 3vw, 24px) clamp(12px, 2.4vw, 28px);
-      background:  none;
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgb(255 255 255 / 0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
   }
-
   .title-bar h1 {
-      margin: 0;
-      font-size: clamp(1.25rem, 4vw, 1.75rem);
-      font-weight: 600;
-      color: rgb(255 255 255 / 0.95);
-      letter-spacing: -0.02em;
+      margin: 0; font-family: var(--ui-font); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 400;
   }
 
   .close-button {
-      appearance: none;
-      background: rgb(255 255 255 / 0.06);
-      border: 1px solid rgb(255 255 255 / 0.1);
-      border-radius: var(--border-radius-sm);
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: rgb(255 255 255 / 0.7);
-      flex-shrink: 0;
+      appearance: none; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm); width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--ink-3); flex-shrink: 0;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
   }
+  .close-button:hover { background: var(--hover-tint); border-color: var(--accent); color: var(--accent); }
+  .close-button:active { transform: scale(0.95); }
 
-  .close-button:hover {
-      background: rgb(255 255 255 / 0.1);
-      color: rgb(255 255 255);
-      transform: scale(1.05);
-  }
-
-  .close-button:active {
-      transform: scale(0.95);
-  }
-
+  /* ===================================
+     README CONTAINER
+     =================================== */
   .container {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      padding: clamp(20px, 2.4vw, 32px);
-      align-items: start;
-      align-content: start;
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; padding: clamp(20px, 2.4vw, 32px);
+      align-items: start; align-content: start;
   }
+  .container::-webkit-scrollbar { width: 4px; }
+  .container::-webkit-scrollbar-track { background: transparent; }
+  .container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  .container .section {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      min-width: 0;
-  }
-
+  .container .section { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
   .section-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem 0;
-      opacity: 0.9;
-      color: rgb(255 255 255 / 0.9);
-      letter-spacing: -0.02em;
+      font-family: var(--ui-font); font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; font-weight: 400; margin: 0 0 0.5rem; color: var(--ink-3);
   }
 
-  .morphing-disclosure {
-      width: 100%;
-      letter-spacing: -0.025em;
-      line-height: 1.5;
-      font-size: 0.875rem;
-  }
-
-  .morphing-disclosure:has([open]) details:not([open]) summary {
-      opacity: var(--dim);
-  }
+  /* ===================================
+     MORPHING DISCLOSURE (README accordion)
+     =================================== */
+  .morphing-disclosure { width: 100%; letter-spacing: -0.01em; line-height: 1.5; }
+  .morphing-disclosure:has([open]) details:not([open]) summary { opacity: var(--dim); }
 
   details {
-      background: rgb(255 255 255 / 0.03);
-      border: 1px solid rgb(255 255 255 / 0.06);
-      border-radius: var(--border-radius-md);
-      cursor: pointer;
-      position: relative;
-      transition: margin var(--duration) var(--ease), translate var(--duration) var(--ease), border-radius var(--duration) var(--ease), background var(--duration) var(--ease);
-      overflow: hidden;
-      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
+      border-radius: var(--border-radius-md); cursor: pointer; position: relative;
+      transition: margin var(--duration) var(--ease), translate var(--duration) var(--ease),
+                  border-radius var(--duration) var(--ease), background var(--duration) var(--ease);
+      overflow: hidden; margin-bottom: 0.5rem;
   }
-
-  details:hover {
-      background: rgb(255 255 255 / 0.05);
-  }
-
+  details:hover { background: var(--hover-tint); }
   details[open] {
-      margin-block: calc(var(--translate-margin) * 1rem);
-      border-radius: var(--border-radius-md);
-      z-index: 10;
-      background: rgb(255 255 255 / 0.06);
+      margin-block: calc(var(--translate-margin) * 1rem); z-index: 10;
+      background: rgba(255, 255, 255, 0.04);
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   }
-
-  details[open]:first-of-type {
-      margin-block-start: 0;
-  }
-
-  details[open]:last-of-type {
-      margin-block-end: 0;
-  }
-
-  details:has(~details[open]) {
-      translate: 0 calc(var(--translate-margin) * -1rem);
-  }
-
-  details[open]~details {
-      translate: 0 calc(var(--translate-margin) * 1rem);
-  }
+  details[open]:first-of-type { margin-block-start: 0; }
+  details[open]:last-of-type { margin-block-end: 0; }
+  details:has(~details[open]) { translate: 0 calc(var(--translate-margin) * -1rem); }
+  details[open]~details { translate: 0 calc(var(--translate-margin) * 1rem); }
 
   summary {
-      padding: 0.875rem 1rem;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 1rem;
-      align-items: center;
-      cursor: pointer;
-      list-style: none;
+      padding: 0.875rem 1rem; display: grid;
+      grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center;
+      cursor: pointer; list-style: none;
       transition: opacity var(--duration) var(--ease);
-      position: relative;
-      z-index: 2;
-      color: rgb(255 255 255 / 0.9);
-      user-select: none;
+      position: relative; z-index: 2; color: var(--ink); user-select: none;
+      font-family: var(--ui-font); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.06em;
   }
-
-  summary::-webkit-details-marker,
-  summary::marker {
-      display: none;
-  }
-
+  summary::-webkit-details-marker, summary::marker { display: none; }
   summary svg {
-      width: 16px;
-      height: 16px;
-      opacity: 0.7;
-      transition: transform var(--duration) var(--ease), opacity var(--duration) var(--ease);
-      fill: currentColor;
-      flex-shrink: 0;
+      width: 14px; height: 14px; opacity: 0.5;
+      transition: transform var(--duration) var(--ease), opacity var(--duration) var(--ease), color 0.2s ease;
+      fill: currentColor; flex-shrink: 0;
   }
-
-  summary svg:first-of-type {
-      width: 18px;
-      height: 18px;
-  }
-
-  details:hover summary svg:last-of-type {
-      opacity: 1;
-  }
-
-  details[open] summary svg:last-of-type {
-      transform: rotate(45deg);
-  }
+  details:hover summary svg { color: var(--accent); opacity: 1; }
+  details[open] summary svg:last-of-type { transform: rotate(45deg); color: var(--accent); }
 
   .content {
-      padding: 0 1rem 1rem 1rem;
-      translate: 0 calc(var(--translate-y) * 1rem);
-      opacity: var(--opacity);
-      filter: blur(calc(var(--blur) * 1px));
-      color: rgb(255 255 255 / 0.86);
+      padding: 0 1rem 1rem; translate: 0 calc(var(--translate-y) * 1rem);
+      opacity: var(--opacity); filter: blur(calc(var(--blur) * 1px));
+      color: var(--ink-2);
       transition: translate var(--duration) var(--ease), opacity var(--duration) var(--ease), filter var(--duration) var(--ease);
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
   }
-
-  .content p {
-      margin: 0 0 0.75rem 0;
-      line-height: 1.6;
-  }
-
-  .content p:last-child {
-      margin-bottom: 0;
-  }
-
-  details[open] .content {
-      translate: 0 0;
-      opacity: 1;
-      filter: blur(0);
-  }
+  details[open] .content { translate: 0 0; opacity: 1; filter: blur(0); }
+  .content p { margin: 0 0 0.75rem; font-family: var(--body-font); font-size: 18px; line-height: 1.6; }
+  .content p:last-child { margin-bottom: 0; }
+  .content strong { color: var(--ink); font-weight: 600; }
 
   kbd {
-      background: rgb(255 255 255 / 0.08);
-      padding: 0.125rem 0.375rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      border: 1px solid rgb(255 255 255 / 0.1);
-      color: rgb(255 255 255 / 0.9);
-      white-space: nowrap;
+      background: rgba(255,255,255,0.07); padding: 0.125rem 0.375rem; border-radius: 3px;
+      font-size: 0.75rem; font-family: var(--ui-font); border: 1px solid var(--border);
+      color: var(--ink); white-space: nowrap;
   }
 
-  .container::-webkit-scrollbar {
-      width: 8px;
-  }
-
-  .container::-webkit-scrollbar-track {
-      background: rgb(255 255 255 / 0.02);
-  }
-
-  .container::-webkit-scrollbar-thumb {
-      background: rgb(255 255 255 / 0.1);
-      border-radius: 4px;
-  }
-
-  .container::-webkit-scrollbar-thumb:hover {
-      background: rgb(255 255 255 / 0.15);
-  }
-
+  /* ===================================
+     SHEET (NEW NOTE overlay)
+     =================================== */
   .sheet {
-      width: min(99vw, 1024px);
-      background: none;
-      color: #f3f3f5;
-      border: 1px solid rgb(255 255 255 / 0.06);
-      border-radius: var(--border-radius-lg);
-      padding: clamp(16px, 3vw, 32px);
-      box-shadow: 0 24px 48px rgb(0 0 0 / 0.3);
-      max-height: min(92vh, 92dvh);
-      position: relative;
-      overflow-y: auto;
+      width: min(99vw, 1024px); background: var(--surface-raised);
+      border: 1px solid var(--border-strong); border-radius: var(--border-radius-lg);
+      padding: clamp(16px, 3vw, 32px); box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      max-height: min(92vh, 92dvh); position: relative; overflow-y: auto;
   }
 
   .titlebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 8px;
-      border-bottom: var(--border-width) solid rgb(255 255 255 / 0.08);
-      border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 10px 8px; border-bottom: 1px solid var(--border);
       margin: -4px -2px 16px;
   }
-
   .titlebar h2 {
-      margin: 0;
-      font-size: 14px;
-      letter-spacing: 0.01em;
-      font-weight: 600;
+      margin: 0; font-family: var(--ui-font); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 400;
   }
 
-  .row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-  }
-
-  .grid {
-      display: grid;
-      gap: 10px;
-  }
-
-  .cols-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grid { display: grid; gap: 10px; }
+  .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   .label {
-      font-weight: 600;
-      opacity: 0.9;
-      display: block;
-      margin-bottom: 6px;
+      font-family: var(--ui-font); font-size: 10px; color: var(--ink-3);
+      text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px;
   }
 
-  .input,
-  .textarea {
-      width: 100%;
-      border: var(--border-width) solid var(--border-color);
-      background: var(--glass-bg);
-      color: var(--ink);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font: inherit;
+  .input, .textarea {
+      width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,0.04);
+      color: var(--ink); border-radius: var(--border-radius-md);
+      padding: 10px 14px; font-family: var(--body-font); font-size: 18px;
       transition: border-color 0.2s ease, background 0.2s ease;
+      caret-color: var(--accent);
   }
-
-  .input:focus,
-  .textarea:focus {
-      outline: 2px solid color-mix(in oklch, var(--accent), #fff 10%);
-      outline-offset: 2px;
-      border-color: var(--accent);
-      background: var(--glass-bg-hover);
-  }
-
-  .textarea {
-      min-height: 96px;
-      resize: vertical;
-      line-height: 1.5;
-  }
-
-  .hint {
-      color: var(--ink-2);
-      font-size: 12px;
-      margin-top: 4px;
-  }
-
-  .preview,
-  .vf {
-      position: relative;
-      width: 100%;
-      max-width: 520px;
-      aspect-ratio: 1/1;
-      height: auto;
-      margin: 6px auto 0;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgb(255 255 255 / 0.06);
-  }
-
-  .vf video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(1) contrast(1.04) brightness(0.98);
-  }
-
-  .preview canvas,
-  .preview img {
-      width: 100%;
-      height: auto;
-      display: block;
-  }
-
-  .preview::before {
-      content: "preview • intoview";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 26px;
-      background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), transparent);
-      font: 600 11px/26px Inter, sans-serif;
-      padding: 0 10px;
-      letter-spacing: 0.02em;
-      color: #f0f0f0;
-      z-index: 3;
-  }
-
-  .fab-wrap {
-      position: fixed;
-      left: 50%;
-      bottom: var(--fab-bottom);
-      transform: translateX(-50%);
-      z-index: var(--z-ui);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .fab {
-      position: relative;
-      width: var(--fab-size);
-      height: var(--fab-size);
-      border-radius: 999px;
-      background: var(--glass-bg);
-      color: var(--ink);
-      border: var(--border-width) solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 16px 36px rgb(0 0 0 / 0.15);
-      transition: background 150ms ease, color 150ms ease, transform 100ms ease;
-      pointer-events: auto;
-  }
-
-  .fab:hover {
-      background: var(--glass-bg-hover);
-      transform: scale(1.02);
-  }
-
-  .fab:active {
-      transform: scale(0.98);
-  }
-
-  .fab svg {
-      width: 58%;
-      height: auto;
-      display: block;
-  }
-
-  .fab-text {
-      position: absolute;
-      left: 50%;
-      bottom: 10px;
-      transform: translateX(-50%);
-      font: 600 11px/1 Inter, sans-serif;
-      color: var(--ink);
-      opacity: 0.9;
-      pointer-events: none;
-  }
-
-  .hud {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom) + 10px);
-      z-index: var(--z-ui);
-      pointer-events: none;
-      font: 600 10px/1 "JetBrains Mono", ui-monospace, monospace;
-      color: var(--ink-2);
-      opacity: 0.9;
-      z-index: 2001;
-  }
-
-  .hud-left {
-      left: var(--corner-pad);
-  }
-
-  .hud-right {
-      right: var(--corner-pad);
-  }
-
-  /* ─── Listview root shell — unchanged position/scroll behavior ─── */
-  .listview-root {
-      position: fixed;
-      inset: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      background: rgb(0 0 0 / 0.82);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      z-index: 20;
-      height: 100%;
-      display: block;
-  }
-
-  .listview-root.curved {
-      transform: scale(1.01);
-  }
-
-  /* ─── Wireframe background layer (parallax, zoom-gated) ─── */
-  .lv-wireframe {
-      position: absolute;
-      inset: -10%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      background-image:
-          linear-gradient(var(--glass-border) 1px, transparent 1px),
-          linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-      background-size: 52px 52px;
-      will-change: transform;
-  }
-  .lv-wireframe.visible { opacity: 1; }
-
-  /* ─── Portfolio container — same layout role, tighter padding ─── */
-  .portfolio-container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      width: 100%;
-      margin: 0 auto;
-      padding: 6rem 0 8rem 0;
-      min-height: 100vh;
-      counter-reset: project-counter 0;
-      pointer-events: auto;
-      justify-content: flex-start;
-      z-index: 1;
-  }
-
-  .listview-root .portfolio-container {
-      padding-top: calc(6rem + 100px);
-      padding-bottom: calc(6rem + 120px);
-  }
-
-  @media (max-width: 768px) {
-      .listview-root .portfolio-container {
-          padding-top: calc(4rem + 80px);
-      }
-  }
-
-  /* ─── Chrome list header ─── */
-  .lv-chrome-header {
-      display: grid;
-      grid-template-columns: 52px 1fr 1.6fr auto;
-      gap: 0;
-      border-top: 1px solid var(--glass-border);
-      border-bottom: 1px solid var(--glass-border);
-      padding: 7px 0;
-      margin-bottom: 0;
-  }
-
-  .lv-chrome-header span {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      opacity: 0.45;
-      padding: 0 16px;
-      border-right: 1px solid var(--glass-border);
-  }
-
-  .lv-chrome-header span:last-child {
-      border-right: none;
-      padding-right: 24px;
-  }
-
-  /* ─── Project list — full-bleed, borderless ─── */
-  .project-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      border-top: 1px solid var(--glass-border);
-  }
-
-  /* ─── Row — Chrome cell aesthetic ─── */
-  .project-item {
-      cursor: default;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 52px 1fr 1.6fr auto;
-      gap: 0;
-      padding: 0;
-      align-items: stretch;
-      border-bottom: 1px solid var(--glass-border);
-      transition: opacity 0.25s ease, background 0.2s ease;
-      opacity: 1;
-      position: relative;
-      z-index: 2;
-      min-height: 52px;
-  }
-
-  .project-item.active {
-      opacity: 1;
-  }
-
-  .listview-root.has-active .project-item {
-      opacity: 0.22;
-  }
-
-  .listview-root.has-active .project-item.active {
-      opacity: 1;
-  }
-
-  /* Row number counter — left chrome column */
-  .project-item::before {
-      content: counter(project-counter, decimal-leading-zero);
-      counter-increment: project-counter;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-size: 10px;
-      color: var(--ink-3);
-      border-right: 1px solid var(--glass-border);
-      opacity: 0.5;
-      transition: opacity 0.15s ease;
-      z-index: 10;
-      position: relative;
-      font-variant-numeric: tabular-nums;
-      padding: 0 14px;
-  }
-
-  .project-item.counter-hidden::before {
-      opacity: 0.04;
-  }
-
-  /* ─── Project data cells ─── */
-  .project-data {
-      position: relative;
-      color: rgba(255,255,255,0.85);
-      line-height: 1;
-      font-family: Inter, system-ui, sans-serif;
-      transition: color 0.2s ease, opacity 0.2s ease;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      border-right: 1px solid var(--glass-border);
-      padding: 0;
-      overflow: hidden;
-  }
-
-  .project-data:last-child {
-      border-right: none;
-  }
-
-  .project-data.artist { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
-  .project-data.album  { font-size: 12px; color: rgba(255,255,255,0.5); }
-  .project-data.year   { font-size: 11px; color: var(--ink-3); font-family: "JetBrains Mono", ui-monospace, monospace; padding: 0 18px; white-space: nowrap; }
-
-  /* ─── Namecheap-style inline edit inputs ─── */
-  .project-data input.inline-field {
-      background: transparent;
-      border: none;
+  .input:focus, .textarea:focus {
       outline: none;
-      color: inherit;
-      font: inherit;
-      letter-spacing: inherit;
-      font-weight: inherit;
-      width: 100%;
-      padding: 0 16px;
-      height: 100%;
-      cursor: default;
-      border-radius: 0;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-      border: 1px solid transparent;
-      -webkit-user-select: text;
-      user-select: text;
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      background: rgba(255,255,255,0.06);
+  }
+  .textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
+
+  .hint { color: var(--ink-3); font-family: var(--ui-font); font-size: 10px; margin-top: 4px; letter-spacing: 0.04em; }
+
+  .preview, .vf {
+      position: relative; width: 100%; max-width: 520px;
+      aspect-ratio: 1/1; height: auto; margin: 6px auto 0;
+      border-radius: var(--border-radius-md); overflow: hidden; border: 1px solid var(--border);
+  }
+  .vf video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.04) brightness(0.98); }
+  .preview canvas, .preview img { width: 100%; height: auto; display: block; }
+  .preview::before {
+      content: "preview • map"; position: absolute; top: 0; left: 0; right: 0; height: 26px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+      font: 400 9px/26px var(--ui-font); padding: 0 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); z-index: 3;
   }
 
-  .project-data input.inline-field::placeholder {
-      color: rgba(255,255,255,0.18);
-      font-size: 11px;
+  /* ===================================
+     FAB (New Note button)
+     =================================== */
+  .fab-wrap {
+      position: fixed; left: 50%; bottom: var(--fab-bottom);
+      transform: translateX(-50%); z-index: var(--z-ui);
+      display: flex; flex-direction: column; align-items: center;
   }
-
-  .project-data input.inline-field:hover,
-  .project-data input.inline-field:focus {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--accent);
-      color: #fff;
-      cursor: text;
+  .fab {
+      position: relative; width: var(--fab-size); height: var(--fab-size);
+      border-radius: 50%; background: var(--surface); color: var(--ink-3);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      pointer-events: auto; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      isolation: isolate;
   }
-
-  /* Kill the old ::after sweep — replaced by input hover */
-  .project-data::after { display: none; }
-
-  /* ─── Hover-triggered Delete button ─── */
-  .project-item-delete {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
-      background: rgba(0,0,0,0.75);
-      border: 1px solid var(--glass-border);
-      color: rgba(255,255,255,0.35);
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 2px;
-      cursor: pointer;
-      z-index: 20;
-      line-height: 1.4;
+  .fab:hover {
+      background: var(--hover-tint); border-color: var(--accent); color: var(--accent);
+      transform: scale(1.05); box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
   }
-
-  .project-item:hover .project-item-delete {
-      opacity: 1;
-      pointer-events: auto;
+  .fab:active { transform: scale(0.96); }
+  .fab svg { width: 58%; height: auto; display: block; }
+  .fab-text {
+      position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+      font: 400 10px/1 var(--ui-font); text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--ink-2); pointer-events: none; transition: color 0.2s ease;
   }
+  .fab:hover .fab-text { color: var(--accent); }
 
-  .project-item-delete:hover {
-      background: rgba(180,40,40,0.3);
-      border-color: rgba(220,80,80,0.5);
-      color: #ff8888;
+  /* ===================================
+     HUD (bottom corner labels)
+     =================================== */
+  .hud {
+      position: fixed; bottom: calc(env(safe-area-inset-bottom) + 16px);
+      z-index: 2001; pointer-events: auto;
+      font: 400 10px/1 var(--ui-font); text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--ink-3); transition: color 0.2s ease;
   }
+  .hud-left { left: var(--corner-pad); }
+  .hud-left:hover { color: var(--accent); }
+  .hud-right { right: var(--corner-pad); pointer-events: none; }
 
-  /* ─── The ghost image — identical follow behavior, just slightly sharper ─── */
+  /* ===================================
+     LIST VIEW
+     =================================== */
+  .listview-root {
+      position: fixed; inset: 0; overflow-y: auto; overflow-x: hidden;
+      background: var(--bg-color); z-index: 20; height: 100%; display: block;
+  }
+  .listview-root.curved { transform: scale(1.01); }
+
+  .portfolio-container {
+      position: relative; display: flex; flex-direction: column;
+      gap: 0; width: 100%; margin: 0 auto;
+      padding: 6rem 2rem 8rem 8rem; min-height: 100vh;
+      counter-reset: project-counter 0; pointer-events: auto;
+  }
+  .listview-root .portfolio-container { padding-top: calc(6rem + 120px); padding-bottom: calc(6rem + 120px); }
+
+  .project-list { list-style: none; margin: 0; padding: 0; width: 100%; }
+
+  .project-item {
+      cursor: pointer; width: 100%;
+      display: grid; grid-template-columns: 40px 1fr 2fr 1fr 1fr 80px;
+      grid-column-gap: 2rem; padding: 16px 0; align-items: center;
+      border-bottom: 1px solid var(--border);
+      transition: opacity 0.3s ease; opacity: 1; position: relative; z-index: 2;
+  }
+  .project-item.active { opacity: 1; }
+  .listview-root.has-active .project-item { opacity: 0.25; }
+  .listview-root.has-active .project-item.active { opacity: 1; }
+
+  .project-item::before {
+      content: counter(project-counter, decimal-leading-zero); counter-increment: project-counter;
+      padding: 4px 0; font-family: var(--ui-font); font-size: 10px;
+      color: var(--ink-3); opacity: 0.5; justify-self: start; z-index: 10;
+      position: relative; transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .project-item:hover::before { color: var(--accent); opacity: 1; }
+  .project-item.counter-hidden::before { opacity: 0.05; }
+
+  .project-data {
+      position: relative; white-space: nowrap; color: var(--ink-3);
+      overflow: hidden; text-overflow: ellipsis; line-height: 1; padding: 2px;
+      transition: all 0.3s ease; z-index: 1;
+      font-family: var(--ui-font); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .project-data.artist {
+      justify-self: start; font-family: var(--body-font); font-size: 24px;
+      color: var(--ink); text-transform: none; letter-spacing: normal; font-style: italic;
+  }
+  .project-data.album, .project-data.category, .project-data.label { justify-self: start; }
+  .project-data.year { justify-self: end; text-align: right; }
+  .project-data::after {
+      content: ""; position: absolute; top: 0; left: -8px;
+      width: calc(100% + 16px); height: calc(100% - 2px);
+      background: var(--accent); transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s ease; z-index: -1; border-radius: 2px;
+  }
+  .project-item:hover .project-data::after { transform: scaleX(1); }
+  .project-item:hover .project-data { color: #000 !important; }
+  .project-item:hover .project-data.artist { font-style: normal; }
+
   .background-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 960px;
-      height: 720px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0;
-      pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 1152px; height: 856px;
+      background-size: cover; background-position: center; background-repeat: no-repeat;
+      opacity: 1; border-radius: var(--border-radius-lg); pointer-events: none;
       transform: translate(-50%, -50%) scale(1);
-      z-index: 0;
-      border: 1px solid var(--glass-border);
-      filter: brightness(0.92) contrast(1.04);
-      transition: opacity 0.25s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); z-index: 0;
+      filter: brightness(0.9) contrast(1.05);
+      transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
+  /* ===================================
+     LOADER
+     =================================== */
   .loader-overlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: calc(var(--z-overlay) + 10);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      z-index: calc(var(--z-overlay) + 10); pointer-events: none;
+      opacity: 0; transition: opacity 0.3s ease;
   }
-
-  .loader-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-  }
-
+  .loader-overlay.active { opacity: 1; pointer-events: auto; }
   .loader-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgb(255 255 255 / 0.12);
-      border-top-color: var(--accent);
-      border-radius: 50%;
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--border-strong);
+      border-top-color: var(--accent); border-radius: 50%;
       animation: spin 0.9s linear infinite;
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  @keyframes spin {
-      to {
-          transform: rotate(360deg);
-      }
-  }
-
+  /* ===================================
+     GOOEY CURSOR
+     =================================== */
   #cursor {
       position: fixed;
-      top: calc(var(--cursor-size) * -0.5);
-      left: calc(var(--cursor-size) * -0.5);
-      pointer-events: none;
-      filter: url(#goo);
-      mix-blend-mode: difference;
-      z-index: var(--z-cursor);
+      top: calc(var(--cursor-size) * -0.5); left: calc(var(--cursor-size) * -0.5);
+      pointer-events: none; filter: url(#goo);
+      mix-blend-mode: var(--cursor-blend); z-index: var(--z-cursor);
   }
-
   .cursor-circle {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: var(--cursor-size);
-      height: var(--cursor-size);
-      border-radius: 999px;
-      background: var(--ink);
-      will-change: transform;
+      position: absolute; top: 0; left: 0;
+      width: var(--cursor-size); height: var(--cursor-size);
+      border-radius: 50%; background: var(--accent); will-change: transform;
   }
+  .goo { display: none; }
+  @media (pointer: coarse) { #cursor { display: none; } }
 
-  .goo {
-      display: none;
-  }
+  /* ===================================
+     FOCUS VISIBLE
+     =================================== */
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  button:focus-visible, .btn:focus-visible, .icon-btn:focus-visible { outline-offset: 3px; }
+  *:focus:not(:focus-visible) { outline: none; }
 
-  @media (pointer: coarse) {
-      #cursor {
-          display: none;
-      }
-  }
-
+  /* ===================================
+     RESPONSIVE
+     =================================== */
   @media (max-width: 1200px) {
-      .project-item {
-          grid-template-columns: 44px 1fr 1.3fr auto;
-      }
-      .background-image {
-          width: 600px;
-          height: 450px;
-      }
+      .project-item { grid-template-columns: 30px 1fr 1.5fr 0.8fr 0.8fr 60px; grid-column-gap: 1rem; }
+      .background-image { width: 600px; height: 450px; }
   }
-
-  @media (max-width: 900px) {
-      .container {
-          grid-template-columns: 1fr;
-      }
-  }
-
+  @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
   @media (max-width: 768px) {
       :root {
           --fab-size: 128px;
           --fab-bottom: calc(env(safe-area-inset-bottom) + clamp(14px, 3.5vh, 36px));
-          --edge-blur: 10px;
-          --edge-mask-i: 65%;
-          --edge-mask-o: 80%;
+          --edge-blur: 8px; --edge-mask-i: 65%; --edge-mask-o: 80%;
       }
-      .sheet {
-          width: min(98vw, 560px);
-      }
-      .portfolio-container {
-          padding: 0;
-      }
-      .project-item {
-          grid-template-columns: 36px 1fr auto;
-          min-height: 56px;
-      }
-      .project-data.album {
-          display: none;
-      }
-      .background-image {
-          width: 320px;
-          height: 240px;
-      }
-      .view-toggle,
-      .zoom-presets {
-          gap: 6px;
-          padding: 4px;
-      }
-      .toggle-btn,
-      .zoom-presets-btn {
-          padding: 6px;
-      }
+      .sheet { width: min(98vw, 560px); }
+      .listview-root .portfolio-container { padding-top: calc(4rem + 80px); }
+      .portfolio-container { padding: 0 1rem; }
+      .project-item { grid-template-columns: 30px 1fr 1fr; grid-column-gap: 1rem; }
+      .project-data:not(.artist):not(.album) { display: none; }
+      .background-image { width: 400px; height: 300px; }
+      .view-toggle, .zoom-presets { gap: 4px; padding: 4px; }
+      .toggle-btn, .zoom-presets-btn { padding: 6px; }
   }
-
   @media (max-width: 500px) {
-      .morphing-disclosure {
-          font-size: 0.8125rem;
-      }
-      summary {
-          padding: 0.75rem 0.875rem;
-      }
-      .content {
-          padding: 0 0.875rem 0.875rem 0.875rem;
-      }
-      .title-bar h1 {
-          font-size: 1.25rem;
-      }
-      .close-button {
-          width: 36px;
-          height: 36px;
-      }
+      .morphing-disclosure { font-size: 0.8125rem; }
+      summary { padding: 0.75rem 0.875rem; }
+      .content { padding: 0 0.875rem 0.875rem; }
+      .title-bar h1 { font-size: 10px; }
+      .close-button { width: 32px; height: 32px; }
   }
 
-  .hidden {
-      display: none !important;
-  }
-
-  .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-  }
-
-  .no-scroll {
-      overflow: hidden;
-  }
-
-  .pointer-events-none {
-      pointer-events: none;
-  }
-
-  .pointer-events-auto {
-      pointer-events: auto;
-  }
-
-  *:focus-visible {
-      outline: 2px solid color-mix(in oklch, var(--accent), #fff 10%);
-      outline-offset: 2px;
-  }
-
-  button:focus-visible,
-  .btn:focus-visible,
-  .icon-btn:focus-visible {
-      outline-offset: 3px;
-  }
-
-  *:focus:not(:focus-visible) {
-      outline: none;
-  }
+  .no-scroll { overflow: hidden; }
 
   @media print {
-      .header,
-      .controls,
-      .fab-wrap,
-      .hud,
-      .view-toggle,
-      .zoom-presets,
-      .edge-blur,
-      .vignette,
-      .dark-layer,
-      #cursor {
-          display: none !important;
-      }
-      body {
-          background: #fff;
-          color: #000;
-      }
+      .header, .controls, .fab-wrap, .hud, .view-toggle, .zoom-presets, .edge-blur, .vignette, .dark-layer, #cursor { display: none !important; }
+      body { background: #fff; color: #000; cursor: auto; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-          scroll-behavior: auto !important;
-      }
-      .curved {
-          transform: none;
-      }
-  }
+  .fab, .icon-btn, .btn, .toggle-btn, .zoom-presets-btn, .project-item, details { transform: translateZ(0); backface-visibility: hidden; }
 
-  .fab,
-  .icon-btn,
-  .btn,
-  .toggle-btn,
-  .zoom-presets-btn,
-  .project-item,
-  details {
-      transform: translateZ(0);
-      backface-visibility: hidden;
-  }
+  /* ===================================
+     INLINE EDITABLE CELLS (Namecheap DNS style)
+     =================================== */
 
-  @media (prefers-color-scheme: dark) {
-      :root {
-          color-scheme: dark;
-      }
+  .editable-cell {
+      cursor: pointer;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: var(--border-radius-sm);
+      transition: color 0.15s ease, background 0.15s ease;
+      padding: 2px 4px;
+      margin: -2px -4px;
   }
+  .project-item:not(:hover) .editable-cell:hover {
+      color: var(--ink) !important;
+      background: rgba(255,255,255,0.05);
+  }
+  .edit-pencil {
+      opacity: 0;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+  }
+  .edit-pencil svg { width: 10px; height: 10px; }
+  .project-item:not(:hover) .editable-cell:hover .edit-pencil { opacity: 1; }
+  .project-item:hover .editable-cell .edit-pencil { opacity: 0.35; }
+  .project-item:hover .editable-cell:hover .edit-pencil { opacity: 0.8; }
 
-  @media (prefers-contrast: high) {
-      :root {
-          --border-color: rgba(255, 255, 255, 0.3);
-          --glass-bg: rgba(255, 255, 255, 0.1);
-          --glass-bg-hover: rgba(255, 255, 255, 0.15);
-      }
-      .edge-blur,
-      .vignette {
-          opacity: 0.5;
-      }
+  .editing-cell {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.95) !important;
+      border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent) !important;
+      border-radius: var(--border-radius-sm);
+      padding: 1px 4px !important;
+      margin: -3px -5px !important;
+      color: var(--ink) !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+      font-style: normal !important;
+      z-index: 100;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent), 0 4px 20px rgba(0,0,0,0.5);
   }
+  .cell-input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: 0;
+      text-transform: none;
+      font-style: normal;
+      min-width: 80px;
+      max-width: 320px;
+      padding: 2px 0;
+      caret-color: var(--accent);
+      cursor: text;
+  }
+  .project-data.artist .cell-input { font-style: normal; font-size: 22px; min-width: 120px; }
+  .project-data.album .cell-input { font-size: 10px; min-width: 80px; }
+
+  .cell-actions { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .cell-action-btn {
+      appearance: none; border: 1px solid var(--border); border-radius: 3px;
+      background: rgba(255,255,255,0.06); cursor: pointer;
+      font-size: 10px; line-height: 1; padding: 2px 5px; color: var(--ink-3);
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+      font-family: var(--ui-font);
+  }
+  .cell-confirm { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .cell-confirm:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); border-color: var(--accent); color: var(--accent); }
+  .cell-cancel:hover { background: rgba(255,80,80,0.12); border-color: rgba(255,80,80,0.5); color: #ff6363; }
+
+  .project-item:hover .editing-cell { background: rgba(0,0,0,0.95) !important; }
+  .project-item:hover .editing-cell .cell-input { color: var(--ink) !important; }
+
+
 </style>
-
+</head>
 <body>
   <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="goo">
       <defs>
           <filter id="goo">
               <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="6"></feGaussianBlur>
-              <feColorMatrix
-                  in="blur"
-                  mode="matrix"
-                  result="goo"
-                  values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 35 -15"
-              ></feColorMatrix>
+              <feColorMatrix in="blur" mode="matrix" result="goo" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 35 -15"></feColorMatrix>
               <feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
           </filter>
       </defs>
   </svg>
+  
   <div id="cursor" aria-hidden="true"></div>
   <div id="root"></div>
+  
   <div class="view-toggle">
       <button class="toggle-btn" id="gridBtn" title="Grid View">
-          <svg
-              height="24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-          >
+          <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
               <rect height="7" width="7" x="3" y="3"></rect>
               <rect height="7" width="7" x="14" y="3"></rect>
               <rect height="7" width="7" x="14" y="14"></rect>
               <rect height="7" width="7" x="3" y="14"></rect>
-          </svg></button
-      ><button class="toggle-btn" id="listBtn" title="List View">
-          <svg
-              height="24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-          >
+          </svg>
+      </button>
+      <button class="toggle-btn" id="listBtn" title="List View">
+          <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
               <line x1="8" x2="21" y1="6" y2="6"></line>
               <line x1="8" x2="21" y1="12" y2="12"></line>
               <line x1="8" x2="21" y1="18" y2="18"></line>
@@ -1403,15 +803,11 @@
           </svg>
       </button>
   </div>
+  
   <div id="loader" class="loader-overlay active"><div class="loader-spinner"></div></div>
-  <div class="hud hud-left">v1.4.1</div>
+  <div class="hud hud-left" title="View README">v1.4.1</div>
   <div class="hud hud-right" id="coordsMount">x 0 • y 0</div>
 
-
-
-
-
-<!-- Delete Confirmation Dialog -->
 <div id="deleteConfirmOverlay" class="overlay">
   <div class="delete-confirm-dialog">
     <h3>Delete Item</h3>
@@ -1423,7 +819,6 @@
   </div>
 </div>
 
-<!-- README Overlay -->
 <div id="readmeOverlay" class="overlay-wrapper">
   <div class="title-bar">
     <h1>intoview • note — README</h1>
@@ -1494,7 +889,7 @@
             </svg>
             <span>Interactions</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/>
             </svg>
           </summary>
           <div class="content">
@@ -1509,7 +904,7 @@
             </svg>
             <span>Credits</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/>
             </svg>
           </summary>
           <div class="content">
@@ -1527,7 +922,6 @@
 
 <script type="module">
 
-  
   import React, { useEffect, useMemo, useRef, useState, Suspense } from "https://esm.sh/react@18.3.1";
   import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
   import * as THREE from "https://esm.sh/three@0.160.1";
@@ -1772,8 +1166,8 @@
       PAD = 12,
       CAP_SIZE = 18,
       TITLE_SIZE = 20;
-  const MONO = "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-  const UI = "Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif";
+  const MONO = "'Space Mono', monospace";
+  const UI = "'Space Mono', monospace";
   const isBlobOrData = (u) => /^blob:|^data:/i.test(u);
   function nowTS() {
       const d = new Date(),
@@ -1784,21 +1178,43 @@
           mm = String(d.getMinutes()).padStart(2, "0");
       return `${y}-${m}-${day} • ${hh}:${mm}`;
   }
+  
+  // OPTIMIZATION: Concurrency Limiter for Image Load Queue
   const imageCache = new Map();
   const textureCache = new Map();
+  const loadQueue = [];
+  let activeLoads = 0;
+  const MAX_CONCURRENT = 6; 
+
+  function processLoadQueue() {
+      if (activeLoads >= MAX_CONCURRENT || loadQueue.length === 0) return;
+      activeLoads++;
+      const { url, resolve, reject } = loadQueue.shift();
+      
+      const img = new Image();
+      if (!/^blob:|^data:/i.test(url)) img.crossOrigin = "anonymous";
+      img.onload = () => {
+          imageCache.set(url, img);
+          resolve(img);
+          activeLoads--;
+          processLoadQueue();
+      };
+      img.onerror = () => {
+          reject(new Error("img load failed: " + url));
+          activeLoads--;
+          processLoadQueue();
+      };
+      img.src = url;
+  }
+
   function loadImage(url) {
       if (imageCache.has(url)) return Promise.resolve(imageCache.get(url));
-      return new Promise((res, rej) => {
-          const img = new Image();
-          if (!/^blob:|^data:/i.test(url)) img.crossOrigin = "anonymous";
-          img.onload = () => {
-              imageCache.set(url, img);
-              res(img);
-          };
-          img.onerror = () => rej(new Error("img load failed: " + url));
-          img.src = url;
+      return new Promise((resolve, reject) => {
+          loadQueue.push({ url, resolve, reject });
+          processLoadQueue();
       });
   }
+
   function drawHair(ctx, x, y, w) {
       ctx.fillStyle = "rgba(255,255,255,0.6)";
       ctx.fillRect(x, y, w, HAIR);
@@ -2105,7 +1521,6 @@
       }, []);
       return null;
   }
-  /* ========= Grid / scene (unchanged logic) ========= */
   class Grid extends THREE.Group{
     constructor(canvas,camera,opts){ super();
       this.canvas=canvas; this.camera=camera; this.opts=opts;
@@ -2123,13 +1538,11 @@
   
       this.downTime=0; this.downX=0; this.downY=0; this.longPressTimer=null; this.longPressFired=false;
   
-      // ADDED: New properties for drag-zoom
       this.dragZoomStart = null;
       this.isDragging = false;
   
       this.pointerMap=new Map(); this.pinchDist0=null; this.cameraZ0=null;
       
-      // ENHANCED: Improved pinch zoom properties
       this.pinchAnimation = null;
       this.lastPinchTime = 0;
       this.pinchVelocity = 0;
@@ -2150,7 +1563,6 @@
       canvas.addEventListener("wheel",this.onWheel,{passive:false});
       canvas.addEventListener("contextmenu",this.onContextMenu,{passive:false});
       
-      // DISABLE PINCH ZOOM: Comprehensive touch event prevention
       canvas.addEventListener("touchstart", (e) => {
           if (e.touches.length >= 2) {
               e.preventDefault();
@@ -2165,7 +1577,6 @@
           }
       }, {passive: false});
       
-      // Prevent pinch zoom on the entire document
       document.addEventListener("touchstart", (e) => {
           if (e.touches.length >= 2) {
               e.preventDefault();
@@ -2182,7 +1593,6 @@
           }
       }, {passive: false});
       
-      // Additional prevention for gesture events
       document.addEventListener("gesturestart", (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -2221,7 +1631,6 @@
       const stepX = tile + gap, stepY = tile + gap;
       const sizeX = stepX * (cols - 1), sizeY = stepY * (rows - 1);
   
-      // dispose previous groups/materials
       if (this.groups && this.groups.length){
         this.groups.forEach(g=>{
           g.children.forEach(m=>{
@@ -2263,11 +1672,8 @@
       }
   }
   
-    // NEW METHOD: Load texture for a single tile and fade it in
     async loadAndApplyTexture(mesh, item, index){
-      // Don't load anything for null items (empty grid slots)
       if (!item) {
-        // Ensure it's the invisible material
         const oldMat = mesh.material;
         mesh.material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.0 });
         oldMat?.dispose?.();
@@ -2276,41 +1682,42 @@
   
       let texture;
       try {
-        // textureForItem is async, it loads/draws the canvas
         texture = await textureForItem(item);
       } catch (e) {
         console.warn(e);
-        texture = makeEmptyTexture(); // Fallback
+        texture = makeEmptyTexture(); 
       }
   
-      // Now that we have the texture, create the final material
+      // OPTIMIZATION: Start transparent for fade, then lock it to opaque. 
+      // This is safe because `makeCardCanvas` completely fills the bounds with a black background.
       const newMat = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
-        opacity: 0.0 // Start invisible
+        opacity: 0.0
       });
   
-      // Dispose of the previous material (the one from layout)
       mesh.material?.dispose?.();
-      
-      // Assign the new material
       mesh.material = newMat;
   
-      // Fade it in with a staggered delay
       gsap.to(newMat, {
         opacity: 1.0,
         duration: 0.6,
-        delay: (index % this.opts.cols) * 0.03 + Math.floor(index / this.opts.cols) * 0.05, // Staggered fade
-        ease: "power2.out"
+        delay: (index % this.opts.cols) * 0.03 + Math.floor(index / this.opts.cols) * 0.05,
+        ease: "power2.out",
+        onComplete: () => {
+            if (newMat.opacity === 1.0) {
+                // Remove transparency overhead once fully visible
+                newMat.transparent = false;
+                newMat.needsUpdate = true;
+            }
+        }
       });
     }
   
-    // MODIFIED: Removed async, now triggers individual tile loading
     setItems(items){
       const cols = this.opts.cols;
       const neededRows = Math.max(1, Math.ceil(items.length / cols));
   
-      // Rebuild layout to exactly fit items (no trailing empty cells)
       this.layout(neededRows);
   
       const total = this.tiles.length;
@@ -2377,7 +1784,7 @@
     onWheel(e){
       if(this.manageMode) return;
       e.preventDefault();
-      this._externalZoomActive = false; // Ensure wheel zoom is treated as internal
+      this._externalZoomActive = false; 
       const cur = this.camera.position.z;
       const dz = e.deltaY * CONFIG.wheelScale * Math.max(0.6, cur);
       const target = this._clampZ(cur + dz);
@@ -2388,17 +1795,10 @@
         e.preventDefault();
         if(this.manageMode) return;
         
-        // --- NEW LOGIC ---
-        // Only trigger for mouse right-click, not touch holds
         if (e.pointerType !== 'touch') {
-          // Animate position back to center
           gsap.to(this.offset, { x: 0, y: 0, duration: 0.6, ease:"power2.out" });
-          // Animate zoom back to default
           gsap.to(this.camera.position, { z: CONFIG.zoomOut, duration: 0.6, ease:"power2.out" });
         }
-        // --- END NEW LOGIC ---
-        
-        // (Old delete logic from here was removed)
       }
       _updatePointer(e) {
           if (e.pointerType === "touch") this.pointerMap.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -2410,7 +1810,6 @@
                   this.pinchDist0 = null;
                   this.cameraZ0 = null;
                   this.pinchVelocity = 0;
-                  // Cancel any ongoing pinch animations
                   if (this.pinchAnimation) {
                       this.pinchAnimation.kill();
                       this.pinchAnimation = null;
@@ -2426,7 +1825,6 @@
           return Math.hypot(b.x - a.x, b.y - a.y);
       }
       onPointerMove(e) {
-          // DISABLE PINCH ZOOM: Prevent default for all touch events
           if (e.pointerType === "touch") {
               e.preventDefault();
               e.stopPropagation();
@@ -2438,9 +1836,8 @@
           this.pointerUv.set(x, y);
           this._updatePointer(e);
           
-          // DISABLE PINCH ZOOM: Completely ignore pinch gestures
           if (this.pointerMap.size >= 2) {
-              return; // Exit early - no pinch zoom processing
+              return; 
           }
           if (this.isPointerDown) {
               if (!this.isDragging) {
@@ -2480,13 +1877,12 @@
           }
       }
       onPointerDown(e) {
-          // ENHANCED: Prevent default for touch events
           if (e.pointerType === "touch") {
               e.preventDefault();
           }
           this.isPointerDown = !0;
           this.isTouch = e.pointerType === "touch";
-          this.currentDragEase = this.isTouch ? CONFIG.touchDragEase : 0.3; // Use a faster ease for active mouse drag
+          this.currentDragEase = this.isTouch ? CONFIG.touchDragEase : 0.3;
           this.canvas.classList.add("dragging");
           this._lastPX = e.clientX;
           this._lastPY = e.clientY;
@@ -2499,13 +1895,11 @@
 
           const holdMs = this.isTouch ? CONFIG.longPressMsTouch : CONFIG.longPressMsMouse;
           
-          // Clear both timers
           if (this.longPressTimer) window.clearTimeout(this.longPressTimer);
           if (this.deletePressTimer) window.clearTimeout(this.deletePressTimer); 
           this.longPressTimer = null;
           this.deletePressTimer = null;
 
-          // Existing long-press timer for ZOOMING
           this.longPressTimer = window.setTimeout(() => {
               const dist = Math.hypot(this._lastPX - this.downX || 0, this._lastPY - this.downY || 0);
               const thresh = this.isTouch ? CONFIG.clickMovePxTouch : CONFIG.clickMovePx;
@@ -2518,33 +1912,28 @@
               }
           }, holdMs);
 
-          // ADDED: New 2-second timer for DELETE (TOUCH ONLY)
           if (this.isTouch) {
-              const deleteHoldMs = 2000; // 2 seconds
+              const deleteHoldMs = 2000;
               this.deletePressTimer = window.setTimeout(() => {
                   const dist = Math.hypot(this._lastPX - this.downX || 0, this._lastPY - this.downY || 0);
                   const thresh = CONFIG.clickMovePxTouch;
                   
-                  // Check if still holding, not dragging, and a zoom hasn't already fired
                   if (this.isPointerDown && dist <= thresh && !this.longPressFired) {
                       const { idx } = this._hitTileAt(this._lastPX ?? this.downX, this._lastPY ?? this.downY);
                       
                       if (idx >= 0 && this.tileItems && this.tileItems[idx]) {
                           const item = this.tileItems[idx];
-                          if (item && !item.placeholder) { // Don't delete placeholders
-                              this.longPressFired = !0; // Mark as fired to prevent click
+                          if (item && !item.placeholder) { 
+                              this.longPressFired = !0; 
                               
-                              // Calculate index relative to content (excluding placeholders)
-                              // This assumes 1 placeholder at the start
                               const contentIndex = idx - 1; 
                               
                               if (contentIndex >= 0 && contentIndex < (this.tileItems.length - 2)) {
                                   const artist = item.title || item.artist || 'Item';
                                   const album = item.caption || item.album || '';
                                   
-                                  if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+                                  if (navigator.vibrate) navigator.vibrate(50); 
                                   
-                                  // Show the delete confirmation dialog
                                   window.showDeleteConfirm(contentIndex, artist, album, window.deleteFromArchive);
                               }
                           }
@@ -2561,7 +1950,7 @@
               gsap.to(this.camera.position, { z: this.dragZoomStart, duration: 0.3, ease: "power2.out" });
               this.dragZoomStart = null;
               this.isDragging = !1;
-              this.currentDragEase = this.opts.dragEase; // Revert to default ease for inertia
+              this.currentDragEase = this.opts.dragEase; 
           }
           const upTime = performance.now();
           const dt = upTime - this.downTime;
@@ -2612,13 +2001,11 @@
           const tx = this.offset.x + cursorOffset.x,
               ty = this.offset.y - cursorOffset.y;
 
-          // ADDED: Use enhanced constraint system with rubber band and magnetic snapping
           this._updatePositionWithConstraints(tx, ty);
           
           const z = this.camera.position.z;
           if (Math.abs(z - (this._lastZ ?? z)) > 1e-3) {
               this._lastZ = z;
-              // REMOVED: onZoomChange callback - React now owns zoom state exclusively
           }
       }
       resetPosition() {
@@ -2628,14 +2015,12 @@
           this.cameraZ0 = null;
           this.pinchVelocity = 0;
           
-          // Cancel any ongoing animations
           if (this.pinchAnimation) {
               this.pinchAnimation.kill();
               this.pinchAnimation = null;
           }
       }
 
-      // ADDED: Rubber band effect for boundary constraints
       _applyRubberBand(value, min, max, rubber) {
           if (value < min) {
               const excess = min - value;
@@ -2647,7 +2032,6 @@
           return value;
       }
 
-      // ADDED: Magnetic grid snapping
       _snapToGrid(value, gridSize, magnetStrength) {
           const snappedValue = Math.round(value / gridSize) * gridSize;
           const diff = snappedValue - value;
@@ -2659,24 +2043,20 @@
           return value;
       }
 
-      // ADDED: Enhanced position update with rubber band and magnetic snapping
       _updatePositionWithConstraints(tx, ty) {
           const { minX, maxX, minY, maxY } = this._computeBounds();
           const ease = this.currentDragEase || this.opts.dragEase;
           
-          // Apply magnetic snapping when not dragging
           if (!this.isPointerDown && !this.isDragging) {
               const gridSize = this.opts.tile + this.opts.gap;
               tx = this._snapToGrid(tx, gridSize, CONFIG.magnet);
               ty = this._snapToGrid(ty, gridSize, CONFIG.magnet);
           }
           
-          // Apply rubber band effect when dragging
           if (this.isDragging) {
               tx = this._applyRubberBand(tx, minX, maxX, CONFIG.rubber);
               ty = this._applyRubberBand(ty, minY, maxY, CONFIG.rubber);
           } else {
-              // Normal constraints when not dragging
               tx = Math.min(Math.max(tx, minX), maxX);
               ty = Math.min(Math.max(ty, minY), maxY);
           }
@@ -2767,8 +2147,6 @@
       useEffect(() => {
           grid.setItems(items);
       }, [items, grid]);
-      // REMOVED: onZoomChange callback to eliminate circular dependency
-      // React now owns zoom state exclusively
       useEffect(() => {
           if (!controllerRef) return;
           controllerRef.current = {
@@ -3772,218 +3150,200 @@
           )
       );
   }
-  function ListView({ items }) {
-  const bgRef = useRef(null);
-  const containerRef = useRef(null);
-  const wireRef = useRef(null);
-  const [activeIdx, setActiveIdx] = useState(-1);
-  const mouse = useRef({ x: 0, y: 0 });
-  const bgPos = useRef({ x: 0, y: 0 });
-  const wirePos = useRef({ x: 0, y: 0 });
-  const wireRaf = useRef(null);
+  // ─── Inline-editable cell (Namecheap DNS style) ───────────────────────────
+  function EditableCell({ value, className, editable, onCommit, placeholder }) {
+    const [editing, setEditing] = React.useState(false);
+    const [draft, setDraft] = React.useState(value);
+    const inputRef = React.useRef(null);
 
-  // Track mouse position
-  useEffect(() => {
-    const move = (e) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
-    };
-    window.addEventListener("pointermove", move, { passive: true });
-    return () => window.removeEventListener("pointermove", move);
-  }, []);
+    // Sync if parent value changes while not editing
+    React.useEffect(() => { if (!editing) setDraft(value); }, [value, editing]);
 
-  // ── Ghost image smooth follow — original logic, untouched ──
-  useEffect(() => {
-    const bg = bgRef.current;
-    const container = containerRef.current;
-    if (!bg || !container) return;
-
-    const update = () => {
-      const rect = container.getBoundingClientRect();
-      const scrollTop = container.scrollTop;
-      const relX = mouse.current.x - rect.left;
-      const relY = mouse.current.y + scrollTop - rect.top;
-
-      bgPos.current.x += (relX - bgPos.current.x) * 0.12;
-      bgPos.current.y += (relY - bgPos.current.y) * 0.12;
-
-      gsap.set(bg, {
-        x: bgPos.current.x,
-        y: bgPos.current.y,
-        xPercent: -50,
-        yPercent: -50,
-        force3D: true,
+    const activate = (e) => {
+      if (!editable) return;
+      e.stopPropagation();
+      setDraft(value);
+      setEditing(true);
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
       });
     };
 
+    const commit = () => {
+      const trimmed = draft.trim();
+      if (trimmed && trimmed !== value) onCommit(trimmed);
+      setEditing(false);
+    };
+
+    const cancel = () => {
+      setDraft(value);
+      setEditing(false);
+    };
+
+    const onKeyDown = (e) => {
+      if (e.key === "Enter") { e.preventDefault(); commit(); }
+      else if (e.key === "Escape") { e.preventDefault(); cancel(); }
+      e.stopPropagation();
+    };
+
+    if (editing) {
+      return React.createElement(
+        "span",
+        { className: `${className} editing-cell`, onClick: (e) => e.stopPropagation() },
+        React.createElement("input", {
+          ref: inputRef,
+          className: "cell-input",
+          value: draft,
+          onChange: (e) => setDraft(e.target.value),
+          onKeyDown,
+          onBlur: commit,
+          placeholder: placeholder || value,
+          "aria-label": `Edit ${placeholder}`,
+        }),
+        React.createElement(
+          "span",
+          { className: "cell-actions" },
+          React.createElement("button", {
+            className: "cell-action-btn cell-confirm",
+            onMouseDown: (e) => { e.preventDefault(); commit(); },
+            title: "Save (Enter)",
+            "aria-label": "Save",
+          }, "✓"),
+          React.createElement("button", {
+            className: "cell-action-btn cell-cancel",
+            onMouseDown: (e) => { e.preventDefault(); cancel(); },
+            title: "Cancel (Esc)",
+            "aria-label": "Cancel",
+          }, "✕")
+        )
+      );
+    }
+
+    return React.createElement(
+      "span",
+      {
+        className: `${className}${editable ? " editable-cell" : ""}`,
+        onClick: editable ? activate : undefined,
+        title: editable ? "Click to edit" : undefined,
+      },
+      value || placeholder || "—",
+      editable && React.createElement("span", { className: "edit-pencil", "aria-hidden": "true" },
+        React.createElement("svg", { viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" },
+          React.createElement("path", { d: "M11.5 2.5l2 2-7 7-2.5.5.5-2.5 7-7z" })
+        )
+      )
+    );
+  }
+
+  function ListView({ items, onUpdateItem }) {
+  const bgRef = useRef(null);
+  const containerRef = useRef(null);
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const bgPos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const scrollY = useRef(0);
+
+  useEffect(() => {
+    const root = containerRef.current?.closest('.listview-root');
+    if(!root) return;
+    const move = (e) => { mouse.current.x = e.clientX; mouse.current.y = e.clientY; };
+    const onScroll = (e) => { scrollY.current = e.target.scrollTop; };
+    window.addEventListener("pointermove", move, { passive: true });
+    root.addEventListener("scroll", onScroll, { passive: true });
+    scrollY.current = root.scrollTop;
+    return () => {
+        window.removeEventListener("pointermove", move);
+        root.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const bg = bgRef.current;
+    if (!bg) return;
+    const update = () => {
+      const targetY = mouse.current.y + scrollY.current;
+      const targetX = mouse.current.x;
+      bgPos.current.x += (targetX - bgPos.current.x) * 0.12;
+      bgPos.current.y += (targetY - bgPos.current.y) * 0.12;
+      gsap.set(bg, { x: bgPos.current.x, y: bgPos.current.y, xPercent: -50, yPercent: -50, force3D: true });
+    };
     gsap.ticker.add(update);
     return () => gsap.ticker.remove(update);
   }, []);
 
-  // ── Fade ghost out on container leave — original logic, untouched ──
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
     const onLeave = () => {
       setActiveIdx(-1);
       const bg = bgRef.current;
-      if (bg) {
-        gsap.to(bg, { opacity: 0, scale: 1.05, duration: 0.6, ease: "power2.inOut" });
-      }
+      if (bg) gsap.to(bg, { opacity: 0, scale: 1.05, duration: 0.6, ease: "power2.inOut" });
       container.classList.remove("has-active");
     };
-
     container.addEventListener("mouseleave", onLeave);
     return () => container.removeEventListener("mouseleave", onLeave);
   }, []);
 
-  // ── Ghost image reveal on row hover — original logic, untouched ──
   const onEnterRow = (idx, imageUrl) => {
     setActiveIdx(idx);
     containerRef.current?.classList.add("has-active");
-
     const bg = bgRef.current;
     if (!bg) return;
-
     bg.style.backgroundImage = `url(${imageUrl})`;
     gsap.set(bg, { opacity: 0, scale: 1.2, transformOrigin: "center center" });
     gsap.to(bg, { opacity: 0.65, scale: 1, duration: 0.9, ease: "power3.out" });
   };
 
-  // ── Wireframe parallax + zoom gate ──
-  useEffect(() => {
-    const wire = wireRef.current;
-    if (!wire) return;
-
-    function tick() {
-      wirePos.current.x += (mouse.current.x - wirePos.current.x) * 0.048;
-      wirePos.current.y += (mouse.current.y - wirePos.current.y) * 0.048;
-
-      const ox = (wirePos.current.x / (window.innerWidth  || 1) - 0.5) * -24;
-      const oy = (wirePos.current.y / (window.innerHeight || 1) - 0.5) * -16;
-      wire.style.transform = `translate3d(${ox}px, ${oy}px, 0)`;
-
-      const scale = window.visualViewport ? window.visualViewport.scale : 1;
-      wire.classList.toggle("visible", scale >= 0.75);
-
-      wireRaf.current = requestAnimationFrame(tick);
-    }
-    tick();
-    return () => cancelAnimationFrame(wireRaf.current);
-  }, []);
-
-  // ── Inline edit helpers ──
-  const handleTitleChange   = (item, val) => { item.title   = val; };
-  const handleCaptionChange = (item, val) => { item.caption = val; };
-
-  const handleDelete = (e, idx, item) => {
-    e.stopPropagation();
-    if (window.showDeleteConfirm && window.deleteFromArchive) {
-      window.showDeleteConfirm(idx, item.title || "—", item.caption || "—", window.deleteFromArchive);
-    }
-  };
-
-  // Archive items (user-added) vs seed items (wolfie photos)
-  const archiveItems = items.filter(it => !it.placeholder && !it.baked);
-  const seedItems    = items.filter(it =>  it.baked && !it.placeholder);
-
-  const renderRow = (it, idx, isDeletable) => {
-    const title   = it.title   || "";
-    const caption = it.caption || "";
-    const image   = it.src     || "";
-
-    return React.createElement(
-      "li",
-      {
-        key: `${it.id || title}_${idx}`,
-        className: `project-item ${activeIdx === idx ? "active" : ""}`,
-        onMouseEnter: () => onEnterRow(idx, image),
-        onContextMenu: isDeletable ? (e) => {
-          e.preventDefault();
-          if (window.deleteFromArchive) {
-            window.showDeleteConfirm(idx, title || "—", caption || "—", window.deleteFromArchive);
-          }
-        } : undefined,
-      },
-      // ── Title cell — inline editable ──
-      React.createElement(
-        "span",
-        { className: "project-data artist" },
-        React.createElement("input", {
-          className: "inline-field",
-          defaultValue: title,
-          placeholder: "title",
-          readOnly: !isDeletable,
-          onChange: (e) => handleTitleChange(it, e.target.value),
-          onClick: (e) => e.stopPropagation(),
-        })
-      ),
-      // ── Caption cell — inline editable ──
-      React.createElement(
-        "span",
-        { className: "project-data album" },
-        React.createElement("input", {
-          className: "inline-field",
-          defaultValue: caption,
-          placeholder: "caption",
-          readOnly: !isDeletable,
-          onChange: (e) => handleCaptionChange(it, e.target.value),
-          onClick: (e) => e.stopPropagation(),
-        })
-      ),
-      // ── Year cell ──
-      React.createElement("span", { className: "project-data year" }, new Date().getFullYear()),
-      // ── Delete button — hover-revealed, only for archive items ──
-      isDeletable && React.createElement(
-        "button",
-        {
-          className: "project-item-delete",
-          title: "Delete",
-          onClick: (e) => handleDelete(e, idx, it),
-        },
-        "Delete"
-      )
-    );
-  };
-
   return React.createElement(
     "div",
     { className: "listview-root curved" },
-
-    // Wireframe parallax layer
-    React.createElement("div", { className: "lv-wireframe", ref: wireRef }),
-
     React.createElement(
       "main",
       { className: "portfolio-container", ref: containerRef },
-
-      // ── Chrome column headers ──
       React.createElement(
-        "div",
-        { className: "lv-chrome-header" },
-        React.createElement("span", null, "#"),
-        React.createElement("span", null, "Title"),
-        React.createElement("span", null, "Caption"),
-        React.createElement("span", null, String(new Date().getFullYear()))
-      ),
-
-      // ── Archive rows (user notes, deletable + editable) ──
-      archiveItems.length > 0 && React.createElement(
         "ul",
-        { className: "project-list", role: "list", "data-section": "notes" },
-        archiveItems.map((it, idx) => renderRow(it, idx, true))
-      ),
+        { className: "project-list", role: "list" },
+        items.map((it, idx) => {
+          const artist = it.title || "—";
+          const album = it.caption || "—";
+          const image = it.src || "";
+          // Only archive items (have an id starting with "note_") are editable
+          const isEditable = !it.placeholder && !it.seed && typeof onUpdateItem === "function";
 
-      // ── Seed rows (wolfie photos, read-only title, editable caption) ──
-      seedItems.length > 0 && React.createElement(
-        "ul",
-        { className: "project-list", role: "list", "data-section": "wolfie", style: { marginTop: "1px" } },
-        seedItems.map((it, idx) => renderRow(it, archiveItems.length + idx, false))
+          return React.createElement(
+            "li",
+            {
+              key: `${it.id || artist}_${idx}`,
+              className: `project-item ${activeIdx === idx ? "active" : ""}`,
+              onMouseEnter: () => onEnterRow(idx, image),
+              onContextMenu: (e) => {
+                e.preventDefault();
+                if (window.deleteFromArchive) {
+                  window.showDeleteConfirm(idx, artist, album, window.deleteFromArchive);
+                }
+              },
+            },
+            React.createElement(EditableCell, {
+              value: artist,
+              className: "project-data artist",
+              editable: isEditable,
+              placeholder: "Title",
+              onCommit: (val) => onUpdateItem && onUpdateItem(idx, { title: val }),
+            }),
+            React.createElement(EditableCell, {
+              value: album,
+              className: "project-data album",
+              editable: isEditable,
+              placeholder: "Caption",
+              onCommit: (val) => onUpdateItem && onUpdateItem(idx, { caption: val }),
+            }),
+            React.createElement("span", { className: "project-data label" }, " "),
+            React.createElement("span", { className: "project-data year" }, new Date().getFullYear())
+          );
+        })
       )
     ),
-
-    // Ghost image — follows cursor, same as original
     React.createElement("div", {
       className: "background-image",
       id: "backgroundImage",
@@ -4078,10 +3438,22 @@
       }, [overlayOpen, helpOpen]);
       const addNoteToArchive = (note) => setArchive((arr) => [...arr, note]);
 
+      const updateItemInArchive = (listIdx, patch) => {
+          if (listIdx >= sortedArchive.length) return;
+          const itemToUpdate = sortedArchive[listIdx];
+          setArchive((currentArchive) => {
+              const newArchive = [...currentArchive];
+              const origIdx = currentArchive.findIndex(
+                  (it) => it.id === itemToUpdate.id ||
+                          (it.title === itemToUpdate.title && it.caption === itemToUpdate.caption)
+              );
+              if (origIdx !== -1) newArchive[origIdx] = { ...newArchive[origIdx], ...patch };
+              return newArchive;
+          });
+      };
+
+
       const deleteFromArchive = (index) => {
-          // Calculate the actual index in the sortedArchive array
-          // The index passed is from the displayed items (contentItems)
-          // We need to map it back to the original archive
           if (index < sortedArchive.length) {
               setArchive((currentArchive) => {
                   const newArchive = [...currentArchive];
@@ -4100,7 +3472,6 @@
           }
       };
 
-      // Make delete function available globally
       useEffect(() => {
           window.deleteFromArchive = deleteFromArchive;
           return () => {
@@ -4181,14 +3552,9 @@
               "header",
               { className: "header" },
               React.createElement(
-                  "a",
+                  "div",
                   { className: "brand", href: "#", "aria-label": "intoview home" },
-                  React.createElement("img", {
-                      id: "brandLogo",
-                      alt: "intoview",
-                      decoding: "async",
-                      src: "https://raw.githubusercontent.com/ZACKGORT/intoview/978224baf6a6bce81827044f742761d1bc39893e/intoview-horizontal-lockup-small.svg",
-                  })
+                  React.createElement("span", null, "Wolfgang's Note")
               ),
               React.createElement(
                   "div",
@@ -4281,7 +3647,7 @@
                   )
               )
           ),
-          view === "list" && React.createElement(ListView, { items: contentItems }),
+          view === "list" && React.createElement(ListView, { items: contentItems, onUpdateItem: updateItemInArchive }),
           React.createElement(HelpOverlay, { open: helpOpen, onClose: () => setHelpOpen(!1) }),
           React.createElement(OverlayFlow, {
               open: overlayOpen,
@@ -4395,7 +3761,7 @@
               cur.x += (next.x - cur.x) * 0.35;
               cur.y += (next.y - cur.y) * 0.35;
               const s = Math.max(0.22, i / TAIL_LENGTH);
-              circles[i].style.transform = `translate(${cur.x}px, ${cur.y}px) scale(${s})`;
+              circles[i].style.transform = `translate3d(${cur.x}px, ${cur.y}px, 0) scale(${s})`;
           }
           requestAnimationFrame(tick);
       }
@@ -4410,7 +3776,6 @@
   const readmeClose = document.getElementById('readmeClose');
 
   hudVersion.style.cursor = 'pointer';
-  hudVersion.title = 'View README';
   hudVersion.style.pointerEvents = 'auto';
 
   hudVersion.addEventListener('click', () => {
@@ -4423,7 +3788,6 @@
     document.body.classList.remove('no-scroll');
   });
 
-  // Delete confirmation dialog functionality
   const deleteConfirmOverlay = document.getElementById('deleteConfirmOverlay');
   const cancelDeleteBtn = document.getElementById('cancelDelete');
   const confirmDeleteBtn = document.getElementById('confirmDelete');
@@ -4431,19 +3795,16 @@
   let pendingDeleteIndex = null;
   let pendingDeleteCallback = null;
 
-  // Global function to show delete confirmation
   window.showDeleteConfirm = function(index, artist, album, deleteCallback) {
     pendingDeleteIndex = index;
     pendingDeleteCallback = deleteCallback;
     deleteConfirmOverlay.classList.add('open');
     document.body.classList.add('no-scroll');
     
-    // Update dialog text with item info
     const dialogText = deleteConfirmOverlay.querySelector('p');
     dialogText.textContent = `Are you sure you want to delete "${artist} - ${album}"? This action cannot be undone.`;
   };
 
-  // Cancel delete
   cancelDeleteBtn.addEventListener('click', () => {
     deleteConfirmOverlay.classList.remove('open');
     document.body.classList.remove('no-scroll');
@@ -4451,7 +3812,6 @@
     pendingDeleteCallback = null;
   });
 
-  // Confirm delete
   confirmDeleteBtn.addEventListener('click', () => {
     if (pendingDeleteIndex !== null && pendingDeleteCallback) {
       pendingDeleteCallback(pendingDeleteIndex);

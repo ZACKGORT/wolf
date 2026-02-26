@@ -786,7 +786,7 @@
       .sheet { width: min(98vw, 560px); }
       .listview-root .portfolio-container { padding-top: calc(4rem + 80px); }
       .portfolio-container { padding: 0 1rem; }
-      .project-item { grid-template-columns: 30px 1fr 1fr; grid-column-gap: 1rem; }
+      .project-item { grid-template-columns: 30px 1fr 1fr 32px; grid-column-gap: 0.75rem; }
       .project-data:not(.artist):not(.album) { display: none; }
       .background-image { width: 400px; height: 300px; }
       .view-toggle, .zoom-presets { gap: 4px; padding: 4px; }
@@ -904,34 +904,46 @@
      On touch: show a persistent edit icon per row, tap row to expand
      into a full-width edit panel inside the row itself.
      =================================== */
+  /* Hide mobile-edit-btn on desktop */
+  .mobile-edit-btn { display: none; }
+
   @media (pointer: coarse) {
-      /* Always-visible edit affordance — small pencil chip on the right */
       .editable-cell { cursor: default; gap: 0; padding: 0; margin: 0; }
       .editable-cell:hover { color: inherit !important; background: none !important; }
-      .edit-pencil { display: none !important; } /* hidden — tap target on row instead */
+      .edit-pencil { display: none !important; } /* hidden — dedicated button instead */
 
-      /* Row tap area — entire row is the tap target, shows edit icon right-side */
+      /* Row tap area — scroll-with-image, no auto-edit */
       .project-item.is-editable {
           position: relative;
-          cursor: pointer;
-          -webkit-tap-highlight-color: rgba(218,165,32,0.08);
+          -webkit-tap-highlight-color: transparent;
           touch-action: manipulation;
       }
-      /* Persistent edit affordance chip in right gutter */
-      .project-item.is-editable::after {
-          content: "✎";
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 14px;
+
+      /* Mobile edit trigger button — shows on each editable row */
+      .mobile-edit-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          appearance: none;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 4px;
           color: var(--ink-3);
-          opacity: 0.35;
-          pointer-events: none;
-          transition: opacity 0.15s ease;
-          line-height: 1;
+          width: 28px;
+          height: 28px;
+          flex-shrink: 0;
+          cursor: pointer;
+          transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
       }
-      .project-item.is-editable:active::after { opacity: 0.8; }
+      .mobile-edit-btn svg { width: 12px; height: 12px; }
+      .mobile-edit-btn:active,
+      .project-item.mobile-editing .mobile-edit-btn {
+          background: rgba(218,165,32,0.15);
+          border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+          color: var(--accent);
+      }
 
       /* Expanded edit panel — overrides the grid layout */
       .project-item.mobile-editing {
@@ -944,8 +956,7 @@
           border-bottom-color: color-mix(in srgb, var(--accent) 30%, transparent);
           min-height: unset;
       }
-      .project-item.mobile-editing::after { display: none; }
-      /* Hide the normal grid columns when expanded */
+      /* When editing, show all project-data normally in first row */
       .project-item.mobile-editing .project-data { display: none !important; }
 
       /* The mobile edit panel itself */
@@ -1571,28 +1582,41 @@
       ctx.arcTo(x, y, x + w, y, rr);
       ctx.closePath();
   }
-  function drawChromeBezel(ctx, s, opts = {}) {
-      const w = Math.max(4, opts.width ?? 1);
-      const r = Math.min(12, opts.radius ?? 4);
+  function drawGlassBezel(ctx, s, opts = {}) {
+      // Glass-style border: luminous inner rim + subtle outer glow
+      const r = opts.radius ?? 6;
       ctx.save();
       ctx.translate(0.5, 0.5);
-      const grad = ctx.createLinearGradient(0, 0, 0, s);
-      grad.addColorStop(0.0, "rgba(255,255,255,0.95)");
-      grad.addColorStop(0.15, "rgba(210,210,210,0.78)");
-      grad.addColorStop(0.5, "rgba(242,242,242,0.95)");
-      grad.addColorStop(0.85, "rgba(210,210,210,0.78)");
-      grad.addColorStop(1.0, "rgba(255,255,255,0.95)");
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = w;
+
+      // Outer subtle glow ring
+      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 3;
       ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      roundRect(ctx, w / 2, w / 2, s - w, s - w, r);
+      roundRect(ctx, 1, 1, s - 2, s - 2, r + 2);
       ctx.stroke();
-      ctx.strokeStyle = "rgba(255,255,255,0.95)";
+
+      // Main glass edge — angled light sweep
+      const edgeGrad = ctx.createLinearGradient(0, 0, s, s);
+      edgeGrad.addColorStop(0.0,  "rgba(255,255,255,0.45)");
+      edgeGrad.addColorStop(0.18, "rgba(255,255,255,0.18)");
+      edgeGrad.addColorStop(0.5,  "rgba(255,255,255,0.06)");
+      edgeGrad.addColorStop(0.82, "rgba(255,255,255,0.14)");
+      edgeGrad.addColorStop(1.0,  "rgba(255,255,255,0.30)");
+      ctx.strokeStyle = edgeGrad;
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, 0.75, 0.75, s - 1.5, s - 1.5, r);
+      ctx.stroke();
+
+      // Inner hair-line for depth
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
       ctx.lineWidth = 1;
-      roundRect(ctx, w + 0.5, w + 0.5, s - 2 * w - 1, s - 2 * w - 1, Math.max(2, r - 2));
+      roundRect(ctx, 2.5, 2.5, s - 5, s - 5, Math.max(2, r - 3));
       ctx.stroke();
+
       ctx.restore();
+  }
+  function drawChromeBezel(ctx, s, opts = {}) {
+      drawGlassBezel(ctx, s, opts);
   }
   function makeCardCanvas({ img, title = "[ title ]", caption = "[ caption ]", gps = "", ts = nowTS() }) {
       const s = TEX_SIZE,
@@ -1600,12 +1624,17 @@
       c.width = s;
       c.height = s;
       const ctx = c.getContext("2d");
-      ctx.fillStyle = "#000";
+      // Base: dark but not pure black — glass should be translucent
+      ctx.fillStyle = "#080808";
       ctx.fillRect(0, 0, s, s);
-      ctx.fillStyle = "#000";
+      // Top bar — glass tint
+      const topGrad = ctx.createLinearGradient(0, 0, 0, BAR_H);
+      topGrad.addColorStop(0, "rgba(255,255,255,0.10)");
+      topGrad.addColorStop(1, "rgba(255,255,255,0.03)");
+      ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, s, BAR_H);
       ctx.font = `600 ${TITLE_SIZE}px ${UI}`;
-      ctx.fillStyle = "#e6e6e6";
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
       ctx.textBaseline = "top";
       ctx.textAlign = "left";
       ctx.fillText(title, PAD, Math.floor((BAR_H - TITLE_SIZE) / 2));
@@ -1613,36 +1642,50 @@
           ctx.font = `500 12px ${MONO}`;
           ctx.textBaseline = "middle";
           ctx.textAlign = "right";
-          ctx.fillStyle = "#cfcfcf";
+          ctx.fillStyle = "rgba(255,255,255,0.55)";
           ctx.fillText(gps, s - PAD, BAR_H / 2);
           ctx.textAlign = "left";
       }
-      drawHair(ctx, 0, BAR_H, s);
+      // Hairline separator — glass shimmer
+      ctx.fillStyle = "rgba(255,255,255,0.20)";
+      ctx.fillRect(0, BAR_H, s, HAIR);
       const imgTop = BAR_H + HAIR,
           imgH = s - imgTop - (BAR_H + HAIR);
       if (img) {
           coverImage(ctx, img, 0, imgTop, s, imgH);
+          // Glass sheen overlay on image
+          const sheenGrad = ctx.createLinearGradient(0, imgTop, s * 0.6, imgTop + imgH * 0.4);
+          sheenGrad.addColorStop(0, "rgba(255,255,255,0.04)");
+          sheenGrad.addColorStop(1, "rgba(255,255,255,0.0)");
+          ctx.fillStyle = sheenGrad;
+          ctx.fillRect(0, imgTop, s, imgH);
       } else {
           const BORDER_W = 4;
-          ctx.fillStyle = "#000";
+          ctx.fillStyle = "rgba(255,255,255,0.02)";
           ctx.fillRect(0, imgTop, s, imgH);
-          ctx.strokeStyle = "#fff";
+          ctx.strokeStyle = "rgba(255,255,255,0.15)";
           ctx.lineWidth = BORDER_W;
           ctx.strokeRect(BORDER_W / 2, imgTop + BORDER_W / 2, s - BORDER_W, imgH - BORDER_W);
       }
-      drawHair(ctx, 0, s - BAR_H - HAIR, s);
-      ctx.fillStyle = "#000";
+      // Bottom hairline
+      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      ctx.fillRect(0, s - BAR_H - HAIR, s, HAIR);
+      // Bottom bar — glass tint
+      const botGrad = ctx.createLinearGradient(0, s - BAR_H, 0, s);
+      botGrad.addColorStop(0, "rgba(255,255,255,0.03)");
+      botGrad.addColorStop(1, "rgba(255,255,255,0.10)");
+      ctx.fillStyle = botGrad;
       ctx.fillRect(0, s - BAR_H, s, BAR_H);
       ctx.font = `500 ${CAP_SIZE}px ${UI}`;
-      ctx.fillStyle = "#e6e6e6";
+      ctx.fillStyle = "rgba(255,255,255,0.72)";
       ctx.textBaseline = "middle";
       ctx.textAlign = "left";
       ctx.fillText(caption, PAD, s - BAR_H / 2);
       ctx.font = `500 12px ${MONO}`;
-      ctx.fillStyle = "#cfcfcf";
+      ctx.fillStyle = "rgba(255,255,255,0.38)";
       ctx.textAlign = "right";
       ctx.fillText(ts, s - PAD, s - BAR_H / 2);
-      drawChromeBezel(ctx, s, { width: 1, radius: 0 });
+      drawChromeBezel(ctx, s, { width: 1, radius: 5 });
       return c;
   }
   function makeCardTextureFromCanvas(cnv) {
@@ -2484,7 +2527,7 @@
           Canvas,
           {
               gl: { antialias: !0, powerPreference: "high-performance" },
-              camera: { fov: 35, position: [0, 0, CONFIG.zoomOut] },
+              camera: { fov: 35, position: [0, 0, 2.5] },
               dpr: [1, 2],
               onCreated: ({ gl }) => {
                   gl.setClearColor(0x000000, 1);
@@ -3717,10 +3760,8 @@
   };
 
   const handleMobileRowTap = (e, idx, isEditable) => {
-    if (!isTouch || !isEditable) return;
-    e.preventDefault();
-    e.stopPropagation();
-    setMobileEditIdx(idx === mobileEditIdx ? -1 : idx);
+    // Row tap does NOT open edit on mobile anymore — scroll-with-image behavior
+    return;
   };
 
   const handleMobileCommit = (idx, patch) => {
@@ -3763,10 +3804,6 @@
                   window.showDeleteConfirm(idx, artist, album, window.deleteFromArchive);
                 }
               },
-              // Touch: tap row to expand edit panel
-              onClick: isEditable && isTouch
-                ? (e) => handleMobileRowTap(e, idx, isEditable)
-                : undefined,
             },
             // Normal display cells (hidden via CSS when mobile-editing)
             React.createElement(EditableCell, {
@@ -3785,7 +3822,23 @@
             }),
             React.createElement("span", { className: "project-data label" }, " "),
             React.createElement("span", { className: "project-data year" }, new Date().getFullYear()),
-            // Mobile edit panel — only rendered (but CSS-hidden) when touch
+            // Explicit mobile edit button — only on touch + editable rows
+            isEditable && isTouch && !isMobileEditing && React.createElement(
+              "button",
+              {
+                className: "mobile-edit-btn",
+                "aria-label": "Edit entry",
+                onClick: (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setMobileEditIdx(idx);
+                },
+              },
+              React.createElement("svg", { viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" },
+                React.createElement("path", { d: "M11.5 2.5l2 2-7 7-2.5.5.5-2.5 7-7z" })
+              )
+            ),
+            // Mobile edit panel — only rendered when touch + editing
             isEditable && isTouch && React.createElement(MobileEditPanel, {
               key: `edit_${it.id || idx}`,
               item: it,
@@ -3930,7 +3983,7 @@
               delete window.deleteFromArchive;
           };
       }, [deleteFromArchive, sortedArchive]);
-      const [zoom, setZoom] = useState(CONFIG.zoomMin + 0.25 * (CONFIG.zoomMax - CONFIG.zoomMin));
+      const [zoom, setZoom] = useState(2.5); // start at 25% zoom
       const handleTileClick = (idx, item) => {
           if (item?.placeholder) {
               setOverlayOpen(!0);

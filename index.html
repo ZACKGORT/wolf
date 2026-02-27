@@ -491,34 +491,31 @@
   }
 
   /* ===================================
-     FAB (New Note button)
+     CONTEXT MENU
      =================================== */
-  .fab-wrap {
-      position: fixed; left: 50%; bottom: var(--fab-bottom);
-      transform: translateX(-50%); z-index: var(--z-ui);
-      display: flex; flex-direction: column; align-items: center;
+  .ctx-menu {
+      position: fixed; z-index: calc(var(--z-overlay) + 10);
+      background: var(--surface-raised); border: 1px solid var(--border-strong);
+      border-radius: var(--border-radius-md); padding: 4px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      min-width: 180px; pointer-events: auto;
+      opacity: 0; transform: scale(0.92) translateY(-4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
   }
-  .fab {
-      position: relative; width: var(--fab-size); height: var(--fab-size);
-      border-radius: 50%; background: var(--surface); color: var(--ink-3);
-      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
-      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-      pointer-events: auto; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      isolation: isolate;
+  .ctx-menu.open { opacity: 1; transform: scale(1) translateY(0); }
+  .ctx-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 12px; border-radius: calc(var(--border-radius-md) - 2px);
+      cursor: pointer; font-family: var(--ui-font); font-size: 10px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);
+      text-decoration: none; border: none; background: none; width: 100%;
+      text-align: left; transition: background 0.1s ease, color 0.1s ease;
   }
-  .fab:hover {
-      background: var(--hover-tint); border-color: var(--accent); color: var(--accent);
-      transform: scale(1.05); box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
-  }
-  .fab:active { transform: scale(0.96); }
-  .fab svg { width: 58%; height: auto; display: block; }
-  .fab-text {
-      position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
-      font: 400 10px/1 var(--ui-font); text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--ink-2); pointer-events: none; transition: color 0.2s ease;
-  }
-  .fab:hover .fab-text { color: var(--accent); }
+  .ctx-item:hover { background: var(--hover-tint); color: var(--accent); }
+  .ctx-item svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.7; }
+  .ctx-item:hover svg { opacity: 1; }
+  .ctx-divider { height: 1px; background: var(--border); margin: 4px 0; }
 
   /* ===================================
      HUD (bottom corner labels)
@@ -737,11 +734,11 @@
   .no-scroll { overflow: hidden; }
 
   @media print {
-      .header, .controls, .fab-wrap, .hud, .view-toggle, .zoom-presets, .edge-blur, .vignette, .dark-layer, #cursor { display: none !important; }
+      .header, .controls, .hud, .view-toggle, .zoom-presets, .edge-blur, .vignette, .dark-layer, #cursor, .ctx-menu { display: none !important; }
       body { background: #fff; color: #000; cursor: auto; }
   }
 
-  .fab, .icon-btn, .btn, .toggle-btn, .zoom-presets-btn, .project-item, details { transform: translateZ(0); backface-visibility: hidden; }
+  .icon-btn, .btn, .toggle-btn, .zoom-presets-btn, .project-item, details { transform: translateZ(0); backface-visibility: hidden; }
 
   /* ===================================
      INLINE EDITABLE CELLS — desktop (Namecheap DNS style)
@@ -1119,7 +1116,7 @@
             </svg>
           </summary>
           <div class="content">
-            <p>You know, playing with the morphisms, applying the knowns, venturing into the unknown. I have a nifty isometric grid I'm experimenting with elsewhere.</p>
+            <p>Grid for gestural non-linear exploration and discovery. List view for editing, inspecting, removing, etc.</p>
           </div>
         </details>
 
@@ -1135,7 +1132,7 @@
             </svg>
           </summary>
           <div class="content">
-            <p>Be kind while I iron out the kinks, but the premise is: Take a photo → Make a note → Carry along</p>
+            <p>Be kind while I iron out the kinks, but the premise is: Take a photo → Make a note → Carry along (reflect, touch, inspect, edit; all later) — then, cherish. </p>
           </div>
         </details>
 
@@ -1150,10 +1147,7 @@
             </svg>
           </summary>
           <div class="content">
-            <p>If I may offer a relevant <strong>anecdote</strong>: I once worked at a big-deal agency for a big-deal client. Lots of fluff, lots of coasting, lots of individuals operating in silos. As an aside, we maintained our so-called "sprint schedule" in a password protected Keynote presentation. Anyway, our big-deal client came to us <strike>asking</strike> demanding we copy another big-deal agency's website navigation verbatim; note for note.</p>
-            <p>So we did. But, no one asked why ~ except for me, I asked why and was summarily fired, but I digress ~ as it ultimately became clear such navigation schema did not meet their business requirements, nor objectives ~~~ It was, after all, a single-page website that served as the primary gateway into their gated marketplace, but nbd/ngl.</p>
-            <p>Alas, as I develop my concept for <strong>intoview.pro</strong>, I am wanting to craft an experience that allows me to explore methods and techniques that <strong>frankly</strong>, those big-deal agencies cannot or will not do.</p>
-            <p><small>Special thanks to the codepen community, codrops demos, and a case study I found for Phantom Studio's homepage grid.</small></p>
+            <p>All credit goes to Wolfie.</p>
           </div>
         </details>
       </div>
@@ -1294,76 +1288,7 @@
       { src: "https://i.ibb.co/21Npmk7W/lifestylegoalsachieved.webp", title: "Lifestyle Goals: Achieved", caption: "This is the life. He got there. Benchmark met, standard set, bar raised." },
       { src: "https://i.ibb.co/RGJjnMpL/laleedaa.webp", title: "Laleedaa", caption: "Unbothered. Just vibing. Not a care. Laleedaa." },
       { src: "https://i.ibb.co/LXbb1yqN/jobwelldone.webp", title: "Job Well Done", caption: "He did the thing. Whatever it was, it was done well. He knows it." },
-      { src: "https://i.ibb.co/jZ66mwX7/itsthisexactlookthatgetsmeeverysingletime.webp", title: "It's This Exact Look", caption: "That look. He uses it deliberately and it works every single time. Every time." },
-      { src: "https://i.ibb.co/Mm07h9F/ilovehim.webp", title: "I Love Him", caption: "Just that. No context needed. I love him." },
-      { src: "https://i.ibb.co/d4SkHwfB/icecream45678.webp", title: "Ice Cream", caption: "He discovered ice cream. The world shifted slightly on its axis. All was right." },
-      { src: "https://i.ibb.co/whFvFR24/hydratedandhappy.webp", title: "Hydrated and Happy", caption: "Both things. At the same time. This is the whole goal." },
-      { src: "https://i.ibb.co/r2ynCVfQ/homeiswhereyourest.webp", title: "Home Is Where You Rest", caption: "He found his spot. Settled in. Made it home. That's the whole philosophy." },
-      { src: "https://i.ibb.co/Ldmrtb7t/hislittleblacklips.webp", title: "His Little Black Lips", caption: "A close study. The lips, the whiskers, the whole arrangement — just right." },
-      { src: "https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp", title: "His Favorite Café", caption: "He has a regular. He is a regular. They know him here. He prefers it that way." },
-      { src: "https://i.ibb.co/fVrBVSpn/hideyourdogatworkday.webp", title: "Hide Your Dog at Work Day", caption: "He was not hidden. He was proudly displayed. The colleagues were delighted." },
-      { src: "https://i.ibb.co/0RLXVg2g/hidaddy.webp", title: "Hi Daddy", caption: "He said hi. He always says hi. The greeting is genuine every single time." },
-      { src: "https://i.ibb.co/JjGbm5rh/heydaddy.webp", title: "Hey Daddy", caption: "And then he said it again, differently. Both versions are equally good." },
-      { src: "https://i.ibb.co/zWcGkYxT/haircut87654.webp", title: "Post-Haircut, Vol. III", caption: "Another haircut. Another transformation. Still the same Wolfgang underneath." },
-      { src: "https://i.ibb.co/XZD5kPCs/haircut.webp", title: "Fresh Cut", caption: "Groomed, glowing, fully aware of how good he looks right now." },
-      { src: "https://i.ibb.co/8L68BJFv/guardian.webp", title: "The Guardian", caption: "On watch. Protective. There is nothing getting past him today." },
-      { src: "https://i.ibb.co/7NBXqNfS/foreman.webp", title: "The Foreman", caption: "Overseeing operations. Standards are his business. Compliance is expected." },
-      { src: "https://i.ibb.co/YJbXh7S/fluffy.webp", title: "Fluffy Era", caption: "Peak fluff. Maximum volume. He was at his most cloud-like and he knew it." },
-      { src: "https://i.ibb.co/XxZ9sYZc/fivehundredmileroadtripfromwestvirginia.webp", title: "500 Miles from West Virginia", caption: "A long road back. He slept through most of it, which was probably the right call." },
-      { src: "https://i.ibb.co/S45KWTfz/firstsnow.webp", title: "First Snow", caption: "He stepped outside. He looked at the snow. He had opinions. Many, many opinions." },
-      { src: "https://i.ibb.co/93zWzBDm/firesidefavorites2.webp", title: "Fireside Favorites, Vol. II", caption: "Back by the fire. Right where he belongs. The warmth suits him perfectly." },
-      { src: "https://i.ibb.co/mVKrQG5s/firesidefavorites.webp", title: "Fireside Favorites", caption: "Warm light, warm dog, warm everything. The best kind of evening." },
-      { src: "https://i.ibb.co/nNJTsKj4/everyherohasagoodoriginstory.webp", title: "Every Hero Has an Origin Story", caption: "This is his. Before all of it — this moment, this face, this beginning." },
-      { src: "https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp", title: "Elephant, by Wolfgang", caption: "His first collaboration with an elephant. A natural creative partnership." },
-      { src: "https://i.ibb.co/NDk7kcW/drivethruluxurysuite.webp", title: "Drive-Thru Luxury Suite", caption: "The car became a five-star suite. Wolfgang saw to the amenities personally." },
-      { src: "https://i.ibb.co/3YQQ7hBK/drivethru.webp", title: "Drive-Thru", caption: "He goes through every drive-thru. He is known at all of them. They expect him." },
-      { src: "https://i.ibb.co/v9qfSnz/donthidebehindpillowbecomepillow.webp", title: "Don't Hide Behind the Pillow — Become It", caption: "Advanced technique. He didn't avoid the pillow. He became one with the pillow." },
-      { src: "https://i.ibb.co/SDxTXcYS/dinnerforwolfgang.webp", title: "Dinner for Wolfgang", caption: "The table is set. The guest of honor is seated. Service may now begin." },
-      { src: "https://i.ibb.co/XxvXrgTn/deersteakhedidnoteatit.webp", title: "Deer Steak (He Did Not Eat It)", caption: "Offered deer steak. Refused. Politely. With the confidence of a food critic." },
-      { src: "https://i.ibb.co/XfJYXCw4/dailydrip.webp", title: "Daily Drip", caption: "The morning ritual. Water, hydration, a long slow drink. He starts every day right." },
-      { src: "https://i.ibb.co/yFLwD4nv/dadhastogotoameetingsimpromptucampingadventure.webp", title: "Impromptu Camping Adventure", caption: "Dad had a meeting. Wolfgang had a tent. The meeting could wait. Camping happened." },
-      { src: "https://i.ibb.co/fV6xyHmQ/couchsurfing.webp", title: "Couch Surfing", caption: "He moves from couch to couch with the ease of someone who owns all of them." },
-      { src: "https://i.ibb.co/Kcfy2q4h/classic6543.webp", title: "A Classic, Vol. IV", caption: "Another entry in the classics archive. Every one of them is worth keeping." },
-      { src: "https://i.ibb.co/4RLZnZR1/catshouse.webp", title: "The Cat's House", caption: "He visited the cat's house. The cat had thoughts. Wolfgang remained unbothered." },
-      { src: "https://i.ibb.co/Hy8XwrB/calminganywhere.webp", title: "Calm Anywhere", caption: "Plane, car, city, wilderness — it doesn't matter. He finds his calm everywhere." },
-      { src: "https://i.ibb.co/4RfTWWkp/burgerkingindeed.webp", title: "Burger King, Indeed", caption: "He went to Burger King. He was, in fact, treated like a king. As expected." },
-      { src: "https://i.ibb.co/twP8m5wP/buildingburgerking.webp", title: "Building Burger King", caption: "Outside the Burger King. Waiting. The anticipation was palpable and justified." },
-      { src: "https://i.ibb.co/3yYzQLjP/braveboy.webp", title: "Brave Boy", caption: "He was scared. He did it anyway. That's bravery. That's Wolfgang." },
-      { src: "https://i.ibb.co/F4wPJkk8/beefdinneringravy.webp", title: "Beef Dinner in Gravy", caption: "A proper meal. He received it with the gravitas the dish deserved." },
-      { src: "https://i.ibb.co/n8Q5B3NT/atleastthegravyisgood.webp", title: "At Least the Gravy Is Good", caption: "Not a perfect situation. But the gravy is genuinely excellent. Small wins." },
-      { src: "https://i.ibb.co/5XLHJ6h3/assorgrasslass.webp", title: "Grass Assessment", caption: "Serious business, the grass. He evaluates it thoroughly before committing." },
-      { src: "https://i.ibb.co/mrphxssF/angel987654.webp", title: "An Angel", caption: "The light, the pose, the whole thing. An absolute angel. No other word for it." },
-      { src: "https://i.ibb.co/MxGzxSVk/wolfgang00.webp", title: "Wolfgang", caption: "Just Wolfgang. In full. All of him, right here." },
-      { src: "https://i.ibb.co/Swk4v5Tv/wolfgang000.webp", title: "Wolfgang, Again", caption: "Because once was not enough. It never is." },
-      { src: "https://i.ibb.co/KJ9pcSh/sowolfiehatedtherain.webp", title: "Wolfie Hated the Rain", caption: "He made his feelings clear. Formally. In writing, basically. His stance: no." },
-      { src: "https://i.ibb.co/nsKMYrDs/sowhatareyouupto.webp", title: "So What Are You Up To?", caption: "He wants to know. He's asking casually. It's not casual. He's very invested." },
-      { src: "https://i.ibb.co/9kNPNs8m/refresher.webp", title: "Refresher", caption: "A cold drink. A moment of pause. A reset. He takes his refreshment seriously." },
-      { src: "https://i.ibb.co/wZ4jL08Y/precious.webp", title: "Precious", caption: "That's the word. That's the only word. Precious." },
-      { src: "https://i.ibb.co/93bMTmpY/newtothis.webp", title: "New to This", caption: "Early days. Everything was new. He met it all with the same open curiosity." },
-      { src: "https://i.ibb.co/xS9ChmKq/mowhawkwide.webp", title: "Mohawk, Wide Shot", caption: "The full picture. The mohawk in its natural habitat, from a respectful distance." },
-      { src: "https://i.ibb.co/xqv72y7c/mohawk.webp", title: "The Mohawk", caption: "The defining haircut. The look that earned the name. Iconic doesn't cover it." },
-      { src: "https://i.ibb.co/LdR4cY9N/loveinastoriabw.webp", title: "Love in Astoria (B&W)", caption: "Astoria, black and white, and Wolfgang. Everything that matters in one frame." },
-      { src: "https://i.ibb.co/KxhDw7nS/loveinastoria.webp", title: "Love in Astoria", caption: "The neighborhood, the light, the dog. A love letter to a place and a moment." },
-      { src: "https://i.ibb.co/SXWPr4vf/likereallyreallyhatedtherain.webp", title: "Really, Really Hated the Rain", caption: "His feelings escalated. The rain did not stop. He doubled down on his position." },
-      { src: "https://i.ibb.co/mCy62tkg/likereallyhatedtherain.webp", title: "Really Hated the Rain", caption: "He made this very clear. Vocally. Repeatedly. His stance on rain: firm opposition." },
-      { src: "https://i.ibb.co/BKymJdYK/itshisworld.webp", title: "It's His World", caption: "We are all simply living in it. He accepts our presence. He's gracious like that." },
-      { src: "https://i.ibb.co/qYS6Vj2h/improviseasolutionreallydad.webp", title: "Really, Dad? This Is the Solution?", caption: "He saw the improvised fix. He had questions. His skepticism was entirely valid." },
-      { src: "https://i.ibb.co/bRs7ZLrj/improviseasolution.webp", title: "Improvise a Solution", caption: "Something broke. Something was fixed with whatever was available. Wolfgang approved." },
-      { src: "https://i.ibb.co/fVYPWX91/hoodie2.webp", title: "Hoodie, Vol. II", caption: "Another hoodie, claimed. The collection grows. He has exquisite taste in fleece." },
-      { src: "https://i.ibb.co/dwNhjGPZ/hoodie1.webp", title: "Hoodie, Vol. I", caption: "The first hoodie. The one that started it all. A foundational piece." },
-      { src: "https://i.ibb.co/M5Pcy9f9/homemademeals.webp", title: "Homemade Meals", caption: "Cooked with care. Eaten with enthusiasm. He appreciated the effort." },
-      { src: "https://i.ibb.co/N6dbht9r/hehateditsomuch.webp", title: "He Hated It So Much", caption: "Whatever it was, the feeling was strong and it was communicated clearly." },
-      { src: "https://i.ibb.co/CknqHpK/happierinnewyork.webp", title: "Happier in New York", caption: "Something about the city agreed with him. He walked taller. He was home." },
-      { src: "https://i.ibb.co/TBLbZpNb/fiveminuteslater.webp", title: "Five Minutes Later", caption: "Whatever happened before this — five minutes later, this is where he was." },
-      { src: "https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp", title: "The First Few Weeks", caption: "Everything was new. For both of us. We were figuring each other out together." },
-      { src: "https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp", title: "Curb Your Dog (B&W)", caption: "The sign said curb your dog. He saw the sign. He was unbothered by the sign." },
-      { src: "https://i.ibb.co/HTqtChHv/curbyourdog.webp", title: "Curb Your Dog", caption: "A city rule. A Wolfgang moment. The irony was not lost on either of us." },
-      { src: "https://i.ibb.co/kV6CzpWS/comfort2.webp", title: "Comfort, Vol. II", caption: "He returned to comfort. Because comfort is his natural state and rightful place." },
-      { src: "https://i.ibb.co/qfBwLrD/comfort1.webp", title: "Comfort, Vol. I", caption: "The original comfort. The posture, the softness, the total surrender to ease." },
-      { src: "https://i.ibb.co/qFjdZ2Py/classicwolfgang777.webp", title: "A Classic, Vol. VII", caption: "The classics archive continues. Each one essential. None of them the last." },
-      { src: "https://i.ibb.co/8n5gkh5v/classicwolfgang65.webp", title: "A Classic, Vol. VI", caption: "Another one for the archive. Perfect, just like the others. Just like him." },
-      { src: "https://i.ibb.co/wF05mLW2/joyful.webp", title: "Joyful", caption: "That's it. That's the word. Joyful." },
-      { src: "https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp", title: "At This Moment, I Decided He Was Mine", caption: "This exact photo. This exact look. That was the moment. It was already over." },
+
   ];
   const STORAGE_KEY = "intoview_archive_cards_v6";
   const CONFIG = {
@@ -2035,12 +1960,6 @@
   
     onContextMenu(e){
         e.preventDefault();
-        if(this.manageMode) return;
-        
-        if (e.pointerType !== 'touch') {
-          gsap.to(this.offset, { x: 0, y: 0, duration: 0.6, ease:"power2.out" });
-          gsap.to(this.camera.position, { z: CONFIG.zoomOut, duration: 0.6, ease:"power2.out" });
-        }
       }
       _updatePointer(e) {
           if (e.pointerType === "touch") this.pointerMap.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -2399,7 +2318,9 @@
                       z: clamped, 
                       duration: 0.12, 
                       ease: "power2.out",
-                      onComplete: () => { grid._externalZoomActive = false; }
+                      onComplete: () => { 
+                          grid._externalZoomActive = false;
+                      }
                   });
               },
           };
@@ -3365,7 +3286,7 @@
           )
       );
   }
-  function ZoomPresets({ zoom, onSetZoom }) {
+  function ZoomPresets({ zoom, onSetZoom, hidden }) {
       const presets = [
           { label: "75%", zoomZ: 0.75, title: "Tight View (75% Preset)" },
           { label: "50%", zoomZ: 1.5, title: "Default View (50% Preset)" },
@@ -3377,7 +3298,7 @@
       );
       return React.createElement(
           "div",
-          { className: "zoom-presets", "aria-label": "Grid Zoom Presets" },
+          { className: "zoom-presets", "aria-label": "Grid Zoom Presets", style: hidden ? { visibility: "hidden", pointerEvents: "none" } : {} },
           presets.map((p) =>
               React.createElement(
                   "button",
@@ -3708,12 +3629,6 @@
               key: `${it.id || artist}_${idx}`,
               className: rowClasses,
               onMouseEnter: () => onEnterRow(idx, image),
-              onContextMenu: (e) => {
-                e.preventDefault();
-                if (window.deleteFromArchive) {
-                  window.showDeleteConfirm(idx, artist, album, window.deleteFromArchive);
-                }
-              },
               // Touch: tap row to show image + expand edit panel
               onClick: isTouch
                 ? (e) => handleMobileRowTap(e, idx, isEditable, image)
@@ -3881,12 +3796,28 @@
               delete window.deleteFromArchive;
           };
       }, [deleteFromArchive, sortedArchive]);
-      const [zoom, setZoom] = useState(CONFIG.zoomMin + 0.25 * (CONFIG.zoomMax - CONFIG.zoomMin));
+      const [zoom, setZoom] = useState(CONFIG.zoomOut);
+      const [ctxMenu, setCtxMenu] = useState({ open: false, x: 0, y: 0 });
       const handleTileClick = (idx, item) => {
           if (item?.placeholder) {
               setOverlayOpen(!0);
           }
       };
+      useEffect(() => {
+          const onContextMenu = (e) => {
+              e.preventDefault();
+              setCtxMenu({ open: true, x: e.clientX, y: e.clientY });
+          };
+          const onClickAway = (e) => {
+              if (!e.target.closest('.ctx-menu')) setCtxMenu(c => ({ ...c, open: false }));
+          };
+          document.addEventListener('contextmenu', onContextMenu);
+          document.addEventListener('pointerdown', onClickAway);
+          return () => {
+              document.removeEventListener('contextmenu', onContextMenu);
+              document.removeEventListener('pointerdown', onClickAway);
+          };
+      }, []);
       useEffect(() => {
           const gb = document.getElementById("gridBtn"),
               lb = document.getElementById("listBtn");
@@ -3919,12 +3850,7 @@
           window.addEventListener("pointermove", onMove, { passive: !0 });
           return () => window.removeEventListener("pointermove", onMove);
       }, []);
-      useEffect(() => {
-          if (gridCtrl.current?.setZoom) gridCtrl.current.setZoom(zoom);
-          const clamped = Math.max(0, Math.min(1, (zoom - CONFIG.zoomMin) / (CONFIG.zoomMax - CONFIG.zoomMin)));
-          const pct = Math.round(clamped * 100);
-          document.documentElement.style.setProperty("--zoom-pct", `${pct}%`);
-      }, [zoom]);
+      
       return React.createElement(
           React.Fragment,
           null,
@@ -3940,14 +3866,14 @@
                           workgridState: wgState, 
                           items: combinedItems, 
                           onTileClick: handleTileClick, 
-                          controllerRef: gridCtrl, 
+                          controllerRef: gridCtrl,
                       })
                       : React.createElement(GridView, { 
                           workgridState: wgState, 
                           items: combinedItems, 
                           onTileClick: handleTileClick, 
                           controllerRef: gridCtrl, 
-                          isListView: !0 
+                          isListView: !0,
                       })
               )
           ),
@@ -3962,6 +3888,40 @@
               React.createElement(
                   "div",
                   { className: "controls" },
+                  // ── Paw (New Note) ──
+                  React.createElement(
+                      "button",
+                      {
+                          className: "icon-btn",
+                          title: "New Note",
+                          "aria-label": "New Note",
+                          onClick: () => setOverlayOpen(!0),
+                      },
+                      React.createElement(
+                          "svg",
+                          { viewBox: "0 0 24 24", fill: "currentColor", role: "img", "aria-hidden": "true" },
+                          React.createElement("path", { d: "M12 2C8.5 2 6 4.5 6 7.5c0 1.5.6 2.8 1.5 3.8C5.8 12.4 5 13.9 5 15.5 5 18 6.8 20 9 20c.8 0 1.6-.3 2.2-.7L12 19l.8.3c.6.4 1.4.7 2.2.7 2.2 0 4-2 4-4.5 0-1.6-.8-3.1-2.5-4.2.9-1 1.5-2.3 1.5-3.8C18 4.5 15.5 2 12 2zm-5 6.5c0-2 1.5-3.5 3.5-3.5 1 0 2 .4 2.7 1.1C12.9 6.5 13 7 13 7.5c0 .6-.1 1.1-.3 1.6C11.9 9.7 11 10 10 10c-1.7 0-3-1.1-3-1.5zm9.5 8c0 1.4-.9 2.5-2 2.5-.5 0-1-.2-1.4-.5L12 18l-1.1.5c-.4.3-.9.5-1.4.5-1.1 0-2-1.1-2-2.5 0-1.6 1.3-2.8 2.7-3.2.6.1 1.2.2 1.8.2s1.2-.1 1.8-.2c1.4.4 2.7 1.6 2.7 3.2zM15.5 10c-1 0-1.9-.3-2.7-.9-.2-.5-.3-1-.3-1.6 0-.5.1-1 .3-1.4.7-.7 1.7-1.1 2.7-1.1 2 0 3.5 1.5 3.5 3.5 0 .4-1.3 1.5-3 1.5z" })
+                      )
+                  ),
+                  // ── Zoom reset ──
+                  view === "grid" && React.createElement(
+                      "button",
+                      {
+                          className: "icon-btn",
+                          style: { minWidth: 38, fontFamily: "var(--ui-font)", fontSize: 9, letterSpacing: "0.06em" },
+                          title: "Reset zoom",
+                          "aria-label": "Reset zoom",
+                          onClick: () => { setZoom(CONFIG.zoomOut); gridCtrl.current?.setZoom?.(CONFIG.zoomOut); },
+                      },
+                      React.createElement(
+                          "svg",
+                          { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, role: "img", "aria-hidden": "true" },
+                          React.createElement("circle", { cx: "11", cy: "11", r: "8" }),
+                          React.createElement("line", { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }),
+                          React.createElement("line", { x1: "8", y1: "11", x2: "14", y2: "11" })
+                      )
+                  ),
+                  // ── Distortion toggle ──
                   React.createElement(
                       "button",
                       {
@@ -4059,76 +4019,69 @@
           }),
           React.createElement("div", { className: "edge-blur" }),
           React.createElement("div", { className: "vignette" }),
-          React.createElement(ZoomPresets, { zoom, onSetZoom: (z) => gridCtrl.current?.setZoom?.(z) }),
-          React.createElement(
+          React.createElement(ZoomPresets, { zoom, onSetZoom: (z) => { setZoom(z); gridCtrl.current?.setZoom?.(z); }, hidden: view !== "grid" }),
+          // ── Custom Context Menu ──
+          ctxMenu.open && React.createElement(
               "div",
-              { className: "fab-wrap" },
+              {
+                  className: `ctx-menu ${ctxMenu.open ? "open" : ""}`,
+                  style: {
+                      left: Math.min(ctxMenu.x, window.innerWidth - 200),
+                      top: Math.min(ctxMenu.y, window.innerHeight - 140),
+                  },
+              },
               React.createElement(
                   "button",
                   {
-                      className: "fab",
-                      onClick: () => setOverlayOpen(!0),
-                      title: "New note",
-                      "aria-label": "intoview:note",
+                      className: "ctx-item",
+                      onClick: () => { setView("list"); setCtxMenu(c => ({ ...c, open: false })); },
                   },
-                  React.createElement(
-                      "svg",
-                      { viewBox: "0 0 100 100", "aria-hidden": "true" },
-                      React.createElement(
-                          "defs",
-                          null,
-                          React.createElement(
-                              "linearGradient",
-                              { id: "cubeTop", x1: "0", x2: "1", y1: "0", y2: "1" },
-                              React.createElement("stop", { offset: "0", "stop-color": "#fff", "stop-opacity": "1" }),
-                              React.createElement("stop", {
-                                  offset: "1",
-                                  "stop-color": "#dcdcdc",
-                                  "stop-opacity": "1",
-                              })
-                          ),
-                          React.createElement(
-                              "linearGradient",
-                              { id: "cubeSide", x1: "0", x2: "1", y1: "0", y2: "1" },
-                              React.createElement("stop", { offset: "0", "stop-color": "#e8e8e8" }),
-                              React.createElement("stop", { offset: "1", "stop-color": "#bdbdbd" })
-                          ),
-                          React.createElement(
-                              "linearGradient",
-                              { id: "cubeDark", x1: "0", x2: "1", y1: "0", y2: "1" },
-                              React.createElement("stop", { offset: "0", "stop-color": "#8a8a8a" }),
-                              React.createElement("stop", { offset: "1", "stop-color": "#4b4b4b" })
-                          ),
-                          React.createElement(
-                              "filter",
-                              { id: "cubeGlow", x: "-50%", y: "-50%", width: "200%", height: "200%" },
-                              React.createElement("feDropShadow", {
-                                  dx: "0",
-                                  dy: "6",
-                                  stdDeviation: "6",
-                                  "flood-color": "#000",
-                                  "flood-opacity": ".45",
-                              })
-                          )
-                      ),
-                      React.createElement(
-                          "g",
-                          { filter: "url(#cubeGlow)" },
-                          React.createElement("polygon", {
-                              fill: "url(#cubeTop)",
-                              points: "50,14 80,30 50,46 20,30",
-                          }),
-                          React.createElement("polygon", {
-                              fill: "url(#cubeSide)",
-                              points: "80,30 80,66 50,82 50,46",
-                          }),
-                          React.createElement("polygon", {
-                              fill: "url(#cubeDark)",
-                              points: "50,46 50,82 20,66 20,30",
-                          })
-                      )
+                  React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2 },
+                      React.createElement("line", { x1: "8", y1: "6", x2: "21", y2: "6" }),
+                      React.createElement("line", { x1: "8", y1: "12", x2: "21", y2: "12" }),
+                      React.createElement("line", { x1: "8", y1: "18", x2: "21", y2: "18" }),
+                      React.createElement("circle", { cx: "3", cy: "6", r: "1", fill: "currentColor" }),
+                      React.createElement("circle", { cx: "3", cy: "12", r: "1", fill: "currentColor" }),
+                      React.createElement("circle", { cx: "3", cy: "18", r: "1", fill: "currentColor" })
                   ),
-                  React.createElement("span", { className: "fab-text" }, "New Note")
+                  "List View"
+              ),
+              React.createElement("div", { className: "ctx-divider" }),
+              React.createElement(
+                  "button",
+                  {
+                      className: "ctx-item",
+                      onClick: () => {
+                          const overlay = document.getElementById("readmeOverlay");
+                          if (overlay) { overlay.classList.add("open"); document.body.classList.add("no-scroll"); }
+                          setCtxMenu(c => ({ ...c, open: false }));
+                      },
+                  },
+                  React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2 },
+                      React.createElement("path", { d: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" }),
+                      React.createElement("polyline", { points: "14 2 14 8 20 8" }),
+                      React.createElement("line", { x1: "16", y1: "13", x2: "8", y2: "13" }),
+                      React.createElement("line", { x1: "16", y1: "17", x2: "8", y2: "17" }),
+                      React.createElement("polyline", { points: "10 9 9 9 8 9" })
+                  ),
+                  "Read Me"
+              ),
+              React.createElement("div", { className: "ctx-divider" }),
+              React.createElement(
+                  "a",
+                  {
+                      className: "ctx-item",
+                      href: "https://wolfie.love",
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                      onClick: () => setCtxMenu(c => ({ ...c, open: false })),
+                  },
+                  React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2 },
+                      React.createElement("path", { d: "M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" }),
+                      React.createElement("polyline", { points: "15 3 21 3 21 9" }),
+                      React.createElement("line", { x1: "10", y1: "14", x2: "21", y2: "3" })
+                  ),
+                  "wolf.love"
               )
           )
       );
